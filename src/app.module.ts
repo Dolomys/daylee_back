@@ -1,10 +1,21 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
+import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config/dist';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppService } from './app.service';
+import { ArticleController } from './articles/articles.controller';
+import { ArticleModule } from './articles/articles.module';
+import { ArticleService } from './articles/articles.service';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot(),
+    MongooseModule.forRoot("mongodb+srv://Dolomys:Dolomys@cluster0.gwsvg.mongodb.net/myFirstDatabase"),
+    ArticleModule,
+    AuthModule,
+    UsersModule
+  ]
 })
 export class AppModule {}
