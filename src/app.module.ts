@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config/dist';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppService } from './app.service';
 import { ArticleController } from './articles/articles.controller';
 import { ArticleModule } from './articles/articles.module';
 import { ArticleService } from './articles/articles.service';
@@ -12,10 +11,12 @@ import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot("mongodb+srv://Dolomys:Dolomys@cluster0.gwsvg.mongodb.net/myFirstDatabase"),
+    MongooseModule.forRoot(
+      'mongodb+srv://Dolomys:Dolomys@cluster0.gwsvg.mongodb.net/myFirstDatabase',
+    ),
     ArticleModule,
     AuthModule,
-    UsersModule
-  ]
+    UsersModule,
+  ],
 })
 export class AppModule {}

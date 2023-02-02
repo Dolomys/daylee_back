@@ -9,15 +9,14 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
-  .setTitle('Blog tuto')
-  .setDescription('Blog API description')
-  .setVersion('1.0')
-  .addTag('blog')
-  .build();
+    .setTitle('Blog tuto')
+    .setDescription('Blog API description')
+    .setVersion('1.0')
+    .addTag('blog')
+    .build();
 
-const document = SwaggerModule.createDocument(app, config);
-SwaggerModule.setup('api', app, document);
-
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
 }
