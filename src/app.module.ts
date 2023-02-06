@@ -10,10 +10,8 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    MongooseModule.forRoot(
-      'mongodb+srv://Dolomys:Dolomys@cluster0.gwsvg.mongodb.net/myFirstDatabase',
-    ),
+    ConfigModule.forRoot({ envFilePath: './env/.env', isGlobal: true }),
+    MongooseModule.forRoot(process.env.MONGODB_URL),
     ArticleModule,
     AuthModule,
     UsersModule,

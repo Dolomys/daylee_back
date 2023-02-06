@@ -5,6 +5,9 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema()
 export class User {
+  @Prop()
+  token?: string;
+
   @Prop({
     required: true,
     unique: true,
@@ -19,20 +22,6 @@ export class User {
 
   @Prop({ required: true })
   password: string;
-
-  // For test purpose
-  readonly users = [
-    {
-      userId: 1,
-      username: 'john',
-      password: 'changeme',
-    },
-    {
-      userId: 2,
-      username: 'maria',
-      password: 'guess',
-    },
-  ];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

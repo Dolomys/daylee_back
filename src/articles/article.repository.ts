@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Article, ArticleDocument } from './schemas/article.schema';
-import { CreateArticleDto } from './dto/create-article.dto';
+import { CreateArticleDto } from './dto/request/create-article.dto';
 import { FilterQuery, Model } from 'mongoose';
-import { NewCommentary } from './dto/new-commentary.dto';
+import { NewCommentary } from './dto/request/create-commentary.dto';
 import { Comment, CommentDocument } from './schemas/comment.schema';
 
 @Injectable()
@@ -13,23 +13,22 @@ export class ArticleRepository {
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
   ) {}
 
-  async create(createArticleDto: CreateArticleDto): Promise<Article> {
-    const newArticle = new this.articleModel(createArticleDto);
-    return newArticle.save();
+  create(createArticleDto: CreateArticleDto): Promise<Article> {
+    return this.articleModel.create(createArticleDto);
   }
 
-  async findAll(): Promise<Article[]> {
+  findAll(): Promise<Article[]> {
     return this.articleModel.find().exec();
   }
 
-  async findOne(articleFilterQuery: FilterQuery<Article>): Promise<Article> {
+  findOne(articleFilterQuery: FilterQuery<Article>): Promise<Article> {
     return this.articleModel
       .findOne(articleFilterQuery)
       .populate('comments')
       .exec();
   }
 
-  async update(
+  update(
     articleFilterQuery: FilterQuery<Article>,
     article: Partial<Article>,
   ): Promise<Article> {
@@ -38,11 +37,11 @@ export class ArticleRepository {
       .exec();
   }
 
-  async delete(articleFilterQuery: FilterQuery<Article>): Promise<Article> {
+  delete(articleFilterQuery: FilterQuery<Article>): Promise<Article> {
     return this.articleModel.findOneAndRemove(articleFilterQuery).exec();
   }
 
-  async addComment(
+  addComment(
     articleFilterQuery: FilterQuery<Article>,
     comments: NewCommentary,
   ): Promise<Article> {

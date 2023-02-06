@@ -1,16 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Article } from './schemas/article.schema';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
+import { CreateArticleDto } from './dto/request/create-article.dto';
+import { UpdateArticleDto } from './dto/request/update-article.dto';
 import { ArticleRepository } from './article.repository';
-import { NewCommentary } from './dto/new-commentary.dto';
+import { NewCommentary } from './dto/request/create-commentary.dto';
 
 @Injectable()
 export class ArticleService {
   constructor(private readonly articleRepository: ArticleRepository) {}
 
   async getArticleById(articleId: string): Promise<Article> {
-    return this.articleRepository.findOne({ _id: articleId });
+    const result = this.articleRepository.findOne({ _id: articleId });
+    if (result) return result;
+    else throw new NotFoundException(`this article doesn't exist`);
   }
 
   async getArticles(): Promise<Article[]> {
@@ -21,8 +23,11 @@ export class ArticleService {
     return this.articleRepository.create(createArticleDto);
   }
 
-  async updateArticle(articleId: string, updateArticleDto: UpdateArticleDto) {
-    return this.articleRepository.update({ _id: articleId }, updateArticleDto);
+  async updateArticle(
+    articleToUpdate: Article,
+    updateArticleDto: UpdateArticleDto,
+  ) {
+    return this.articleRepository.update(articleToUpdate, updateArticleDto);
   }
 
   async deleteArticle(articleId: string) {
