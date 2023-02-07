@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Article, ArticleDocument } from './schemas/article.schema';
-import { CreateArticleDto } from './dto/request/create-article.dto';
 import { FilterQuery, Model } from 'mongoose';
-import { NewCommentary } from './dto/request/create-commentary.dto';
-import { Comment, CommentDocument } from './schemas/comment.schema';
+import { Article, ArticleDocument } from './article.schema';
+import { Comment, CommentDocument } from './comments/comment.schema';
+import { CreateCommentaryDto } from './comments/dto/request/create-commentary.dto';
 
 @Injectable()
 export class ArticleRepository {
@@ -13,18 +12,18 @@ export class ArticleRepository {
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
   ) {}
 
-  create(createArticleDto: CreateArticleDto): Promise<Article> {
-    return this.articleModel.create(createArticleDto);
+  create(article: Article): Promise<Article> {
+    return this.articleModel.create(article);
   }
 
   findAll(): Promise<Article[]> {
-    return this.articleModel.find().exec();
+    return this.articleModel.find().populate('ownerId', 'username').exec();
   }
 
   findOne(articleFilterQuery: FilterQuery<Article>): Promise<Article> {
     return this.articleModel
       .findOne(articleFilterQuery)
-      .populate('comments')
+      .populate('ownerId')
       .exec();
   }
 
@@ -43,7 +42,7 @@ export class ArticleRepository {
 
   addComment(
     articleFilterQuery: FilterQuery<Article>,
-    comments: NewCommentary,
+    comments: CreateCommentaryDto,
   ): Promise<Article> {
     const newComment = new this.commentModel(comments);
     newComment.save();

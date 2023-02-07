@@ -6,17 +6,17 @@ import {
   Param,
   Post,
   Put,
+  Request,
   UseGuards
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.gard';
 import { ArticleByIdPipe } from './article.pipe';
+import { Article } from './article.schema';
 import { ArticleService } from './articles.service';
 import { CreateArticleDto } from './dto/request/create-article.dto';
-import { NewCommentary } from './dto/request/create-commentary.dto';
 import { UpdateArticleDto } from './dto/request/update-article.dto';
-import { GetArticleDto } from './dto/response/GetArticle';
-import { Article } from './schemas/article.schema';
+import { GetArticleDto } from './dto/response/get-article.dto';
 
 @ApiTags('Articles')
 @Controller('articles')
@@ -27,7 +27,7 @@ export class ArticleController {
     type: [GetArticleDto],
   })
   @Get()
-  async findAll() {
+  findAll() {
     return this.articleService.getArticles();
   }
 
@@ -35,44 +35,52 @@ export class ArticleController {
     description: 'article created',
     type: GetArticleDto,
   })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createArticleDto: CreateArticleDto) {
-    return this.articleService.createArticle(createArticleDto);
+  create(
+    @Body() createArticleDto: CreateArticleDto,
+    @Request() req
+    ) {
+    return this.articleService.createArticle(createArticleDto,req.user.userId);
   }
 
   @ApiCreatedResponse({
     type: GetArticleDto,
   })
-  @Get(':id')
-  async getOne(@Param('id', ArticleByIdPipe) article: Article) {
+  @ApiParam({name:'article Id', type: String})
+  @Get(':articleId')
+  getOne(@Param('articleId', ArticleByIdPipe) article: Article) {
     return article;
   }
+
 
   @ApiCreatedResponse({
     description: 'article updated',
     type: GetArticleDto,
   })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Put(':id')
-  async update(
-    @Param('id', ArticleByIdPipe) articleToUpdate: Article,
+  @ApiParam({name:'article Id', type: String})
+  @Put(':articleId')
+  update(
+    @Param('articleId', ArticleByIdPipe) articleToUpdate: Article,
     @Body() updateArticleDto: UpdateArticleDto,
   ) {
     return this.articleService.updateArticle(articleToUpdate, updateArticleDto);
   }
 
-  @Delete(':id')
-  async delete(@Param('id') articleId: string) {
-    return this.articleService.deleteArticle(articleId);
-  }
-
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Post('/comment/:id')
-  async addComment(
-    @Param('id') articleId: string,
-    @Body() newCommentary: NewCommentary,
-  ) {
-    return this.articleService.addComment(articleId, newCommentary);
+  @Delete(':articleId')
+  delete(@Param('articleId') articleId: string) {
+    
+    this.articleService.deleteArticle(articleId)
+
+    return {
+      statusCode: 204,
+      message: 'article deleted'
+    }
+
   }
 }

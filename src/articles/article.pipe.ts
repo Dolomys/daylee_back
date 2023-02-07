@@ -1,7 +1,5 @@
-import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
-import { ArticleRepository } from './article.repository';
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import { ArticleService } from './articles.service';
-import { Article } from './schemas/article.schema';
 
 @Injectable()
 export class ArticleByIdPipe implements PipeTransform {

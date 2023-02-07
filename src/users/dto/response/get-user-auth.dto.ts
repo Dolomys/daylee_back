@@ -1,25 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class GetArticleDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  title: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  content: string;
-
-  
+export class GetUserAuthDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
-  photo?: string;
+  token?: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  owner: string;
+  username: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  email: string;
 }
