@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ArticleMapper } from './article.mapper';
 import { Article } from './article.schema';
 import { ArticleRepository } from './articles.repository';
-import { CreateCommentaryDto } from './comments/dto/request/create-commentary.dto';
 import { CreateArticleDto } from './dto/request/create-article.dto';
 import { UpdateArticleDto } from './dto/request/update-article.dto';
 import { GetArticleDto } from './dto/response/get-article.dto';
@@ -44,9 +43,5 @@ export class ArticleService {
 
   deleteArticle(articleId: string) {
     return this.articleRepository.delete({ _id: articleId });
-  }
-
-  addComment(articleId: string, newComment: CreateCommentaryDto) {
-    return this.articleRepository.addComment({ _id: articleId }, newComment);
   }
 }

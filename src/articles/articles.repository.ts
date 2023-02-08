@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { Article, ArticleDocument } from './article.schema';
 import { Comment, CommentDocument } from './comments/comment.schema';
-import { CreateCommentaryDto } from './comments/dto/request/create-commentary.dto';
 
 @Injectable()
 export class ArticleRepository {
@@ -38,23 +37,5 @@ export class ArticleRepository {
 
   delete(articleFilterQuery: FilterQuery<Article>): Promise<Article> {
     return this.articleModel.findOneAndRemove(articleFilterQuery).exec();
-  }
-
-  addComment(
-    articleFilterQuery: FilterQuery<Article>,
-    comments: CreateCommentaryDto,
-  ): Promise<Article> {
-    const newComment = new this.commentModel(comments);
-    newComment.save();
-    return this.articleModel
-      .findOneAndUpdate(
-        articleFilterQuery,
-        {
-          $push: { comments: newComment },
-        },
-        { new: true },
-      )
-      .populate('comments')
-      .exec();
   }
 }
