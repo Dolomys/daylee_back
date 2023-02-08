@@ -19,7 +19,7 @@ export class AuthService {
     if(!user)
       throw new NotFoundError('User not found')
 
-    const validated = await bcrypt.compare(pass, user.password)
+    const validated = bcrypt.compareSync(pass, user.password)
     if (!validated) 
       throw new ConflictException('Wrong password')
     
