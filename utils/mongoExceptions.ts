@@ -18,7 +18,7 @@ export class MongoExceptionFilter implements ExceptionFilter {
         default: {
             error = {
               statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-              message: "Internal Error"
+              message: exception.errmsg
             }
             break;
           }

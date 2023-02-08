@@ -1,21 +1,21 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ArticleMapper } from './article.mapper';
 import { Article } from './article.schema';
 import { ArticleRepository } from './articles.repository';
 import { CreateArticleDto } from './dto/request/create-article.dto';
 import { UpdateArticleDto } from './dto/request/update-article.dto';
-import { GetArticleDto } from './dto/response/get-article.dto';
 
 @Injectable()
 export class ArticleService {
   constructor(private readonly articleRepository: ArticleRepository, private readonly articleMapper:ArticleMapper) {}
 
- async getArticleById(articleId: string): Promise<GetArticleDto> {
-    const result = await this.articleRepository.findOne({ _id: articleId });
-    if (!result)
-      throw new NotFoundException(`this article doesn't exist`);
+ async getArticleById(articleId: string) {
+  return this.articleRepository.getArticleWithComments({ _id: articleId })
+    // const result = await this.articleRepository.findOne({ _id: articleId });
+    // if (!result)
+    //   throw new NotFoundException(`this article doesn't exist`);
     
-    return this.articleMapper.toGetArticleDto(result)
+    // return this.articleMapper.toGetArticleDto(result)
   }
 
   getArticles() {

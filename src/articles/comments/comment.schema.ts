@@ -11,7 +11,7 @@ export class Comment {
   content: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
-  ownerId: string;
+  owner: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Article', required: true })
   article: Article

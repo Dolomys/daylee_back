@@ -11,7 +11,7 @@ export class CommentService {
   async addComment(userId: string, createCommentaryDto: CreateCommentaryDto, article: Article) {
     const newComment: Comment = {
       ...createCommentaryDto,
-      ownerId: userId,
+      owner: userId,
       article: article
     }
     return this.commentRepository.addComment(newComment);
