@@ -6,6 +6,6 @@ export class UserByIdPipe implements PipeTransform {
   constructor(private readonly userRepository: UsersRepository) {}
 
   transform(value: any, metadata: ArgumentMetadata) {
-    return this.userRepository.findOne({_id: value});
+    return this.userRepository.findOne({ _id: value });
   }
 }

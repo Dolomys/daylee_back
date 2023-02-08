@@ -7,9 +7,14 @@ import {
   Post,
   Put,
   Request,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.gard';
 import { ArticleByIdPipe } from './article.pipe';
 import { Article } from './article.schema';
@@ -38,22 +43,18 @@ export class ArticleController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(
-    @Body() createArticleDto: CreateArticleDto,
-    @Request() req
-    ) {
-    return this.articleService.createArticle(createArticleDto,req.user.userId);
+  create(@Body() createArticleDto: CreateArticleDto, @Request() req) {
+    return this.articleService.createArticle(createArticleDto, req.user.id);
   }
 
   @ApiCreatedResponse({
     type: GetArticleDto,
   })
-  @ApiParam({name:'article Id', type: String})
+  @ApiParam({ name: 'article Id', type: String })
   @Get(':articleId')
   getOne(@Param('articleId', ArticleByIdPipe) article: Article) {
     return article;
   }
-
 
   @ApiCreatedResponse({
     description: 'article updated',
@@ -61,7 +62,7 @@ export class ArticleController {
   })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @ApiParam({name:'article Id', type: String})
+  @ApiParam({ name: 'article Id', type: String })
   @Put(':articleId')
   update(
     @Param('articleId', ArticleByIdPipe) articleToUpdate: Article,
@@ -74,13 +75,11 @@ export class ArticleController {
   @UseGuards(JwtAuthGuard)
   @Delete(':articleId')
   delete(@Param('articleId') articleId: string) {
-    
-    this.articleService.deleteArticle(articleId)
+    this.articleService.deleteArticle(articleId);
 
     return {
       statusCode: 204,
-      message: 'article deleted'
-    }
-
+      message: 'article deleted',
+    };
   }
 }

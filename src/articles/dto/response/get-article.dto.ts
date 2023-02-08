@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { Comment } from 'src/articles/comments/comment.schema';
+import { GetCommentaryDto } from 'src/articles/comments/dto/response/get-commentary.dto';
 
 export class GetArticleDto {
   @ApiProperty()
@@ -31,5 +31,5 @@ export class GetArticleDto {
   @ApiProperty()
   @IsOptional()
   @IsArray()
-  comments?: Comment[]
+  comments?: GetCommentaryDto[];
 }

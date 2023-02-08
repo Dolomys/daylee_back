@@ -1,7 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
-import { Article } from '../article.schema';
-
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 export type CommentDocument = HydratedDocument<Comment>;
 
@@ -11,10 +9,14 @@ export class Comment {
   content: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
-  owner: string;
+  owner: Types.ObjectId;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Article', required: true })
-  article: Article
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Article',
+    required: true,
+  })
+  article: Types.ObjectId;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);
