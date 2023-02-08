@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Types } from 'mongoose';
-import { Article } from '../article.schema';
+import { UserDocument } from 'src/users/user.schema';
+import { ArticleDocument } from '../article.schema';
 import { CommentMapper } from './comment.mapper';
 import { Comment } from './comment.schema';
 import { CommentRepository } from './comments.repository';
@@ -14,27 +14,16 @@ export class CommentService {
   ) {}
 
   async addComment(
-    userId: Types.ObjectId,
+    user: UserDocument,
     createCommentaryDto: CreateCommentaryDto,
-    article: any,
+    article: ArticleDocument,
   ) {
-    console.log(article);
     const newComment: Comment = {
       ...createCommentaryDto,
-      owner: userId,
-      article: article.id,
+      owner: user,
+      article: article,
     };
     const result = await this.commentRepository.addComment(newComment);
     return this.commentMapper.toGetCommentDto(result);
-  }
-
-  async getArticleComments(article: Article) {
-    return this.commentRepository
-      .findComments({ article: article })
-      .then((commentList) =>
-        commentList.map((comment) =>
-          this.commentMapper.toGetCommentDto(comment),
-        ),
-      );
   }
 }

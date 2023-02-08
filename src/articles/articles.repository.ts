@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { Article, ArticleDocument } from './article.schema';
@@ -9,31 +9,42 @@ export class ArticleRepository {
     @InjectModel(Article.name) private articleModel: Model<ArticleDocument>,
   ) {}
 
-  create(article: Article): Promise<Article> {
+  async orThrow<T>(x: T | null) {
+    if(x == null) throw new NotFoundException('Article not found')
+    return x
+  }
+
+
+  create(article: Article): Promise<ArticleDocument> {
     return this.articleModel.create(article);
   }
 
-  findAll(): Promise<Article[]> {
-    return this.articleModel.find().populate('owner', 'username').exec();
+  findAll(): Promise<ArticleDocument[]> {
+    return this.articleModel.find().populate('owner').exec();
   }
 
-  findOne(articleFilterQuery: FilterQuery<Article>): Promise<Article> {
+  findOneById(articleId: string): Promise<ArticleDocument> {
     return this.articleModel
-      .findOne(articleFilterQuery)
-      .populate('owner', 'username')
-      .exec();
+      .findOne({_id: articleId})
+      .populate('owner')
+      .exec()
+      .then(this.orThrow)
   }
 
   update(
-    articleFilterQuery: FilterQuery<Article>,
-    article: Partial<Article>,
-  ): Promise<Article> {
+    articleToUpdate: ArticleDocument,
+    newArticle: Partial<Article>,
+  ): Promise<ArticleDocument> {
     return this.articleModel
-      .findOneAndUpdate(articleFilterQuery, article, { new: true })
-      .exec();
+      .findOneAndUpdate({_id: articleToUpdate.id}, newArticle, { new: true })
+      .populate('owner')
+      .exec()
+      .then(this.orThrow)
   }
 
-  delete(articleFilterQuery: FilterQuery<Article>): Promise<Article> {
-    return this.articleModel.findOneAndRemove(articleFilterQuery).exec();
+
+  
+  delete(articleFilterQuery: FilterQuery<Article>): Promise<ArticleDocument> {
+    return this.articleModel.findOneAndRemove(articleFilterQuery).exec().then(this.orThrow)
   }
 }

@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { UsersModule } from 'src/users/users.module';
 import { ArticleMapper } from './article.mapper';
 import { Article, ArticleSchema } from './article.schema';
 import { ArticleController } from './articles.controller';
@@ -11,6 +12,7 @@ import { CommentsModule } from './comments/comments.module';
 @Module({
   imports: [
     forwardRef(() => CommentsModule),
+    forwardRef(() => UsersModule),
     MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
   ],

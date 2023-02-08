@@ -1,35 +1,37 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 import { GetCommentaryDto } from 'src/articles/comments/dto/response/get-commentary.dto';
+import { GetUserDto } from 'src/users/dto/response/get-user-auth.dto';
 
 export class GetArticleDto {
   @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  id: string;
+  id: Types.ObjectId;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
   title: string;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
   content: string;
 
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  photoUrl?: string;
+  @ApiPropertyOptional()
+  photoUrl?: string | null;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  owner: string;
+  owner: GetUserDto;
 
-  @ApiProperty()
-  @IsOptional()
-  @IsArray()
-  comments?: GetCommentaryDto[];
+  @ApiPropertyOptional()
+  comments?: GetCommentaryDto[] | null;
 }
+
+export class GetArticleLightDto {
+  @ApiProperty()
+  id: Types.ObjectId;
+
+  @ApiProperty()
+  title: string;
+
+  @ApiProperty()
+  owner: GetUserDto;
+
+}
+

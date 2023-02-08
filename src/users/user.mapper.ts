@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { GetUserAuthDto } from './dto/response/get-user-auth.dto';
+import { GetUserDto } from './dto/response/get-user-auth.dto';
+import { UserDocument } from './user.schema';
 
 @Injectable()
 export class UserMapper {
-  toGetUserDto = (user: any): GetUserAuthDto => ({
-    token: user.token,
+  toGetUserDto = (user: UserDocument): GetUserDto => ({
     email: user.email,
     username: user.username,
   });

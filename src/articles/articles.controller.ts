@@ -5,20 +5,22 @@ import {
   Get,
   Param,
   Post,
-  Put,
-  Request,
-  UseGuards,
+  Put, UseGuards
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiParam,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
+import { ConnectedUser } from 'src/auth/customAuth.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.gard';
+import { UserDocument } from 'src/users/user.schema';
 import { ArticleByIdPipe } from './article.pipe';
-import { Article } from './article.schema';
+import { ArticleDocument } from './article.schema';
 import { ArticleService } from './articles.service';
+import { CommentService } from './comments/comments.service';
+import { CreateCommentaryDto } from './comments/dto/request/create-commentary.dto';
 import { CreateArticleDto } from './dto/request/create-article.dto';
 import { UpdateArticleDto } from './dto/request/update-article.dto';
 import { GetArticleDto } from './dto/response/get-article.dto';
@@ -26,54 +28,46 @@ import { GetArticleDto } from './dto/response/get-article.dto';
 @ApiTags('Articles')
 @Controller('articles')
 export class ArticleController {
-  constructor(private articleService: ArticleService) {}
+  constructor(
+    private articleService: ArticleService, 
+    private readonly commentService: CommentService) {}
 
-  @ApiCreatedResponse({
-    type: [GetArticleDto],
-  })
   @Get()
+  @ApiCreatedResponse({type: [GetArticleDto]})
   findAll() {
     return this.articleService.getArticles();
   }
 
-  @ApiCreatedResponse({
-    description: 'article created',
-    type: GetArticleDto,
-  })
+  @Post()
+  @ApiCreatedResponse({description: 'article created', type: GetArticleDto})
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Post()
-  create(@Body() createArticleDto: CreateArticleDto, @Request() req) {
-    return this.articleService.createArticle(createArticleDto, req.user.id);
+  create(@Body() createArticleDto: CreateArticleDto, @ConnectedUser() user: UserDocument) {
+    return this.articleService.createArticle(createArticleDto, user);
   }
 
-  @ApiCreatedResponse({
-    type: GetArticleDto,
-  })
-  @ApiParam({ name: 'article Id', type: String })
   @Get(':articleId')
-  getOne(@Param('articleId', ArticleByIdPipe) article: Article) {
+  @ApiCreatedResponse({type: GetArticleDto})
+  @ApiParam({ name: 'article Id', type: String })
+  getOne(@Param('articleId', ArticleByIdPipe) article: ArticleDocument) {
     return article;
   }
 
-  @ApiCreatedResponse({
-    description: 'article updated',
-    type: GetArticleDto,
-  })
+  @Put(':articleId')
+  @ApiCreatedResponse({description: 'article updated',type: GetArticleDto})
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiParam({ name: 'article Id', type: String })
-  @Put(':articleId')
   update(
-    @Param('articleId', ArticleByIdPipe) articleToUpdate: Article,
+    @Param('articleId', ArticleByIdPipe) articleToUpdate: ArticleDocument,
     @Body() updateArticleDto: UpdateArticleDto,
   ) {
     return this.articleService.updateArticle(articleToUpdate, updateArticleDto);
   }
 
+  @Delete(':articleId')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Delete(':articleId')
   delete(@Param('articleId') articleId: string) {
     this.articleService.deleteArticle(articleId);
 
@@ -81,5 +75,19 @@ export class ArticleController {
       statusCode: 204,
       message: 'article deleted',
     };
+  }
+
+  @Post(':articleId/comment')
+  @UseGuards(JwtAuthGuard)
+  async addComment(
+    @Param('articleId', ArticleByIdPipe) article: ArticleDocument,
+    @Body() createCommentaryDto: CreateCommentaryDto,
+    @ConnectedUser() user: UserDocument,
+  ) {
+    return this.commentService.addComment(
+      user,
+      createCommentaryDto,
+      article,
+    );
   }
 }

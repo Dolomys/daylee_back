@@ -1,10 +1,12 @@
-import { forwardRef, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Injectable } from '@nestjs/common';
 import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
-import { Types } from 'mongoose';
+import { UserDocument } from 'src/users/user.schema';
 import { ArticleMapper } from './article.mapper';
-import { Article } from './article.schema';
+import { Article, ArticleDocument } from './article.schema';
 import { ArticleRepository } from './articles.repository';
-import { CommentService } from './comments/comments.service';
+import { CommentMapper } from './comments/comment.mapper';
+import { CommentRepository } from './comments/comments.repository';
+import { GetCommentaryDto } from './comments/dto/response/get-commentary.dto';
 import { CreateArticleDto } from './dto/request/create-article.dto';
 import { UpdateArticleDto } from './dto/request/update-article.dto';
 
@@ -13,16 +15,24 @@ export class ArticleService {
   constructor(
     private readonly articleRepository: ArticleRepository,
     private readonly articleMapper: ArticleMapper,
-    @Inject(forwardRef(() => CommentService))
-    private commentService: CommentService,
+    @Inject(forwardRef(() => CommentRepository))
+    private commentRepository: CommentRepository,
+    @Inject(forwardRef(() => CommentMapper))
+    private commentMapper: CommentMapper,
   ) {}
 
-  async getArticleById(articleId: string) {
-    const article = await this.articleRepository.findOne({ _id: articleId });
-    const comments = await this.commentService.getArticleComments(article);
-    if (!article) throw new NotFoundException(`this article doesn't exist`);
+  getArticleComments(article: Article): Promise<GetCommentaryDto[]> {
+    return this.commentRepository
+      .findComments({ article: article })
+      .then((commentList) =>
+        commentList.map((comment) =>
+          this.commentMapper.toGetCommentDto(comment),
+        ),
+      );
+  }
 
-    return this.articleMapper.toGetArticleDto(article, comments);
+   getArticleById(articleId: string): Promise<ArticleDocument> {
+    return this.articleRepository.findOneById(articleId);
   }
 
   getArticles() {
@@ -30,26 +40,25 @@ export class ArticleService {
       .findAll()
       .then((articleList) =>
         articleList.map((article) =>
-          this.articleMapper.toGetArticleDto(article),
+          this.articleMapper.toGetArticleLightDto(article),
         ),
       );
   }
 
   async createArticle(
     createArticleDto: CreateArticleDto,
-    userId: Types.ObjectId,
+    user: UserDocument,
   ) {
     const newArticle: Article = {
       ...createArticleDto,
-      owner: userId,
+      owner: user,
     };
     const articleCreated = await this.articleRepository.create(newArticle);
-    console.log(articleCreated);
     return this.articleMapper.toGetArticleDto(articleCreated);
   }
 
   async updateArticle(
-    articleToUpdate: Article,
+    articleToUpdate: ArticleDocument,
     updateArticleDto: UpdateArticleDto,
   ) {
     return this.articleRepository

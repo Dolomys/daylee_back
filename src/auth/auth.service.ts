@@ -2,9 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from 'src/users/dto/request/login-user.dto';
+import { GetUserDto } from 'src/users/dto/response/get-user-auth.dto';
 import { UserMapper } from 'src/users/user.mapper';
-import { User } from 'src/users/user.schema';
+import { User, UserDocument } from 'src/users/user.schema';
 import { UsersService } from '../users/users.service';
+import { PayloadInterface } from './payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -14,25 +16,25 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(loginUserDto: LoginUserDto): Promise<any> {
+  async validateUser(loginUserDto: LoginUserDto): Promise<UserDocument> {
     const user = await this.usersService.findByUsername(loginUserDto.username);
     if (!user) throw new NotFoundException('User or Password incorrect');
 
     const validated = bcrypt.compareSync(loginUserDto.password, user.password);
     if (!validated) throw new NotFoundException('User or Password incorrect');
 
-    const { password, ...result } = user;
-    return result;
+    return user;
   }
 
   async login(loginUserDto: LoginUserDto) {
     const user = await this.validateUser(loginUserDto);
-    const payload = { username: user._doc.username, id: user._doc._id };
-    user.token = this.jwtService.sign(payload);
-    return this.userMapper.toGetUserDto(user);
+    const payload : PayloadInterface = { username: user.username, id: user.id };
+    return {
+    token: this.jwtService.sign(payload),
+    user: this.userMapper.toGetUserDto(user)}
   }
 
-  async register(user: User) {
+  async register(user: User): Promise<GetUserDto> {
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(user.password, salt);
     user.password = hashedPass;
