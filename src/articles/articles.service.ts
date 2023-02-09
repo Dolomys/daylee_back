@@ -49,12 +49,10 @@ export class ArticleService {
 
   async createArticle(
     createArticleDto: CreateArticleDto,
-    user: UserDocument,
-    fileUrl?: string
+    user: UserDocument
   ) {
     const newArticle: Article = {
       ...createArticleDto,
-      photoUrl: fileUrl,
       owner: user,
     };
 

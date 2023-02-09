@@ -15,5 +15,5 @@ export class UpdateArticleDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  photoUrl: string;
+  photoUrl?: string;
 }

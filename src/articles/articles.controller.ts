@@ -52,7 +52,10 @@ export class ArticleController {
     @Body() createArticleDto: CreateArticleDto,
     @ConnectedUser() user: UserDocument,
     @UploadedFile(UploadCloudinaryPipe) fileUrl?: string) {
-    return this.articleService.createArticle(createArticleDto, user, fileUrl);
+    return this.articleService.createArticle(
+      {...createArticleDto, photoUrl:fileUrl},
+      user
+    );
   }
 
   @Get(':articleId')
@@ -67,11 +70,16 @@ export class ArticleController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, ArticleOwnerGuard)
   @ApiParam({ name: 'articleId', type: String })
+  @UseInterceptors(FileInterceptor('file'))
   update(
     @Param('articleId', ArticleByIdPipe) articleToUpdate: ArticleDocument,
     @Body() updateArticleDto: UpdateArticleDto,
+    @UploadedFile(UploadCloudinaryPipe) fileUrl?: string
   ) {
-    return this.articleService.updateArticle(articleToUpdate, updateArticleDto);
+    return this.articleService.updateArticle(
+      articleToUpdate,
+       {...updateArticleDto, photoUrl:fileUrl}
+       );
   }
 
   @Delete(':articleId')
