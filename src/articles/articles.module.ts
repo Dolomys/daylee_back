@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 import { UsersModule } from 'src/users/users.module';
 import { ArticleMapper } from './article.mapper';
 import { Article, ArticleSchema } from './article.schema';
@@ -11,6 +12,7 @@ import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
+    CloudinaryModule,
     forwardRef(() => CommentsModule),
     forwardRef(() => UsersModule),
     MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }]),

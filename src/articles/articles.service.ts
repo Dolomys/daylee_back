@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Inject } from '@nestjs/common/decorators';
 import { forwardRef } from '@nestjs/common/utils';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UserDocument } from 'src/users/user.schema';
 import { ArticleMapper } from './article.mapper';
 import { Article, ArticleDocument } from './article.schema';
@@ -13,6 +14,7 @@ import { GetArticleDto } from './dto/response/get-article.dto';
 @Injectable()
 export class ArticleService {
   constructor(
+    private readonly cloudinaryService: CloudinaryService,
     private readonly articleRepository: ArticleRepository,
     private readonly articleMapper: ArticleMapper,
     @Inject(forwardRef(() => CommentService))
@@ -48,11 +50,14 @@ export class ArticleService {
   async createArticle(
     createArticleDto: CreateArticleDto,
     user: UserDocument,
+    fileUrl?: string
   ) {
     const newArticle: Article = {
       ...createArticleDto,
+      photoUrl: fileUrl,
       owner: user,
     };
+
     const articleCreated = await this.articleRepository.create(newArticle);
     return this.articleMapper.toGetArticleDto(articleCreated);
   }

@@ -5,8 +5,10 @@ import {
   Get,
   Param,
   Post,
-  Put, UseGuards
+  Put, UploadedFile, UseGuards,
+  UseInterceptors
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -15,6 +17,7 @@ import {
 } from '@nestjs/swagger';
 import { ConnectedUser } from 'src/auth/customAuth.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.gard';
+import { UploadCloudinaryPipe } from 'src/cloudinary/cloudinary.pipe';
 import { UserDocument } from 'src/users/user.schema';
 import { ArticleByIdPipe } from './article.pipe';
 import { ArticleDocument } from './article.schema';
@@ -44,8 +47,12 @@ export class ArticleController {
   @ApiCreatedResponse({type: GetArticleDto})
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  create(@Body() createArticleDto: CreateArticleDto, @ConnectedUser() user: UserDocument) {
-    return this.articleService.createArticle(createArticleDto, user);
+  @UseInterceptors(FileInterceptor('file'))
+  create(
+    @Body() createArticleDto: CreateArticleDto,
+    @ConnectedUser() user: UserDocument,
+    @UploadedFile(UploadCloudinaryPipe) fileUrl?: string) {
+    return this.articleService.createArticle(createArticleDto, user, fileUrl);
   }
 
   @Get(':articleId')
