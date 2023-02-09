@@ -1,4 +1,3 @@
-
 import { ConfigOptions, v2 } from 'cloudinary';
 import { CLOUDINARY } from './constants';
 

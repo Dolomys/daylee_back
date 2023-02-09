@@ -10,11 +10,7 @@ import { PayloadInterface } from './payload.interface';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private usersService: UsersService,
-    private userMapper: UserMapper,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private usersService: UsersService, private userMapper: UserMapper, private jwtService: JwtService) {}
 
   async validateUser(loginUserDto: LoginUserDto): Promise<UserDocument> {
     const user = await this.usersService.findByUsername(loginUserDto.username);
@@ -28,10 +24,11 @@ export class AuthService {
 
   async login(loginUserDto: LoginUserDto) {
     const user = await this.validateUser(loginUserDto);
-    const payload : PayloadInterface = { username: user.username, id: user.id };
+    const payload: PayloadInterface = { username: user.username, id: user.id };
     return {
-    token: this.jwtService.sign(payload),
-    user: this.userMapper.toGetUserDto(user)}
+      token: this.jwtService.sign(payload),
+      user: this.userMapper.toGetUserDto(user),
+    };
   }
 
   async register(user: User): Promise<GetUserDto> {

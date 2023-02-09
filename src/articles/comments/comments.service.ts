@@ -9,16 +9,9 @@ import { GetCommentaryDto } from './dto/response/get-commentary.dto';
 
 @Injectable()
 export class CommentService {
-  constructor(
-    private readonly commentRepository: CommentRepository,
-    private readonly commentMapper: CommentMapper,
-  ) {}
+  constructor(private readonly commentRepository: CommentRepository, private readonly commentMapper: CommentMapper) {}
 
-  async addComment(
-    user: UserDocument,
-    createCommentaryDto: CreateCommentaryDto,
-    article: ArticleDocument,
-  ) {
+  async addComment(user: UserDocument, createCommentaryDto: CreateCommentaryDto, article: ArticleDocument) {
     const newComment: Comment = {
       ...createCommentaryDto,
       owner: user,
@@ -31,10 +24,6 @@ export class CommentService {
   getArticleComments(article: Article): Promise<GetCommentaryDto[]> {
     return this.commentRepository
       .findComments({ article: article })
-      .then((commentList) =>
-        commentList.map((comment) =>
-          this.commentMapper.toGetCommentDto(comment),
-        ),
-      );
+      .then((commentList) => commentList.map((comment) => this.commentMapper.toGetCommentDto(comment)));
   }
 }

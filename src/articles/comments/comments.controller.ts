@@ -1,6 +1,4 @@
-import {
-  Controller
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CommentService } from './comments.service';
 
@@ -8,5 +6,4 @@ import { CommentService } from './comments.service';
 @Controller('/comments')
 export class CommentsController {
   constructor(private readonly commentService: CommentService) {}
-
 }

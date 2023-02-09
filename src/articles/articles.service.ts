@@ -19,38 +19,31 @@ export class ArticleService {
     private readonly articleMapper: ArticleMapper,
     @Inject(forwardRef(() => CommentService))
     private commentService: CommentService,
- ) {}
+  ) {}
 
- async isOwner(user: UserDocument, articleId: string ): Promise<boolean> {
-  const article = await this.getArticleById(articleId)
-  console.log(article)
-  console.log(user)
-  return article.owner.id === user.id
- }
-
-  async getArticleWithComments(article: ArticleDocument): Promise<GetArticleDto>{
-    const comments = await this.commentService.getArticleComments(article)
-    return this.articleMapper.toGetArticleDto(article, comments)
+  async isOwner(user: UserDocument, articleId: string): Promise<boolean> {
+    const article = await this.getArticleById(articleId);
+    console.log(article);
+    console.log(user);
+    return article.owner.id === user.id;
   }
 
-   getArticleById(articleId: string): Promise<ArticleDocument> {
+  async getArticleWithComments(article: ArticleDocument): Promise<GetArticleDto> {
+    const comments = await this.commentService.getArticleComments(article);
+    return this.articleMapper.toGetArticleDto(article, comments);
+  }
+
+  getArticleById(articleId: string): Promise<ArticleDocument> {
     return this.articleRepository.findOneById(articleId);
   }
 
   getArticles() {
     return this.articleRepository
       .findAll()
-      .then((articleList) =>
-        articleList.map((article) =>
-          this.articleMapper.toGetArticleLightDto(article),
-        ),
-      );
+      .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
   }
 
-  async createArticle(
-    createArticleDto: CreateArticleDto,
-    user: UserDocument
-  ) {
+  async createArticle(createArticleDto: CreateArticleDto, user: UserDocument) {
     const newArticle: Article = {
       ...createArticleDto,
       owner: user,
@@ -60,15 +53,10 @@ export class ArticleService {
     return this.articleMapper.toGetArticleDto(articleCreated);
   }
 
-  async updateArticle(
-    articleToUpdate: ArticleDocument,
-    updateArticleDto: UpdateArticleDto,
-  ) {
+  async updateArticle(articleToUpdate: ArticleDocument, updateArticleDto: UpdateArticleDto) {
     return this.articleRepository
       .update(articleToUpdate, updateArticleDto)
-      .then((updatedArticle) =>
-        this.getArticleWithComments(updatedArticle),
-      );
+      .then((updatedArticle) => this.getArticleWithComments(updatedArticle));
   }
 
   deleteArticle(articleId: string) {

@@ -5,7 +5,7 @@ export class GetCommentaryDto {
   @ApiProperty()
   content: string;
 
-  @ApiProperty({type: GetUserDto})
+  @ApiProperty({ type: GetUserDto })
   owner: GetUserDto;
 
   @ApiProperty()

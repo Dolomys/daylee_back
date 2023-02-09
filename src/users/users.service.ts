@@ -6,10 +6,7 @@ import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly userRepository: UsersRepository,
-    private readonly userMapper: UserMapper,
-  ) {}
+  constructor(private readonly userRepository: UsersRepository, private readonly userMapper: UserMapper) {}
 
   findByUsername(username: string): Promise<UserDocument | null> {
     return this.userRepository.findOneByUsername(username);
@@ -21,8 +18,6 @@ export class UsersService {
   }
 
   async getUsernameById(userId: string): Promise<string> {
-    return this.userRepository
-      .findOneById(userId)
-      .then((user) => user.username);
+    return this.userRepository.findOneById(userId).then((user) => user.username);
   }
 }

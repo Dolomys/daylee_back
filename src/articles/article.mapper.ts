@@ -6,12 +6,9 @@ import { GetArticleDto, GetArticleLightDto } from './dto/response/get-article.dt
 
 @Injectable()
 export class ArticleMapper {
-  constructor( private readonly userMapper: UserMapper) {}
+  constructor(private readonly userMapper: UserMapper) {}
 
-  toGetArticleDto = (
-    article: ArticleDocument,
-    comments: GetCommentaryDto[] | null = null,
-  ): GetArticleDto => ({
+  toGetArticleDto = (article: ArticleDocument, comments: GetCommentaryDto[] | null = null): GetArticleDto => ({
     id: article._id,
     title: article.title,
     content: article.content,
@@ -20,9 +17,7 @@ export class ArticleMapper {
     comments: comments,
   });
 
-  toGetArticleLightDto = (
-    article: ArticleDocument,
-  ): GetArticleLightDto => ({
+  toGetArticleLightDto = (article: ArticleDocument): GetArticleLightDto => ({
     id: article._id,
     title: article.title,
     owner: this.userMapper.toGetUserDto(article.owner),

@@ -5,7 +5,7 @@ import { GetCommentaryDto } from './dto/response/get-commentary.dto';
 
 @Injectable()
 export class CommentMapper {
-constructor(private readonly userMapper: UserMapper){}
+  constructor(private readonly userMapper: UserMapper) {}
 
   toGetCommentDto = (comment: CommentDocument): GetCommentaryDto => ({
     id: comment.id,

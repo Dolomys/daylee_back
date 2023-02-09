@@ -20,7 +20,7 @@ export class Article {
   owner: UserDocument;
 
   @Prop()
-  comments?: GetCommentaryDto[]
+  comments?: GetCommentaryDto[];
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);

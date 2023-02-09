@@ -32,6 +32,4 @@ export class GetArticleLightDto {
 
   @ApiProperty()
   owner: GetUserDto;
-
 }
-
