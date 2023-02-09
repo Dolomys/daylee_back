@@ -13,6 +13,7 @@ export class ArticleMapper {
     title: article.title,
     content: article.content,
     photoUrl: article.photoUrl,
+    category: article.category,
     owner: this.userMapper.toGetUserDto(article.owner),
     comments: comments,
   });
@@ -20,6 +21,7 @@ export class ArticleMapper {
   toGetArticleLightDto = (article: ArticleDocument): GetArticleLightDto => ({
     id: article._id,
     title: article.title,
+    category: article.category,
     owner: this.userMapper.toGetUserDto(article.owner),
   });
 }

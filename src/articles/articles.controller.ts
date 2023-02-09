@@ -3,12 +3,10 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
-  Post,
-  Put,
-  UploadedFile,
+  Param, Post,
+  Put, Query, UploadedFile,
   UseGuards,
-  UseInterceptors,
+  UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
@@ -25,6 +23,8 @@ import { GetCommentaryDto } from './comments/dto/response/get-commentary.dto';
 import { CreateArticleDto } from './dto/request/create-article.dto';
 import { UpdateArticleDto } from './dto/request/update-article.dto';
 import { GetArticleDto, GetArticleLightDto } from './dto/response/get-article.dto';
+import { Categories } from './utils/category.enum';
+import { ValidateCategoryPipe } from './utils/category.pipe';
 import { ArticleOwnerGuard } from './utils/isOwner.guard';
 
 @ApiTags('Articles')
@@ -32,10 +32,11 @@ import { ArticleOwnerGuard } from './utils/isOwner.guard';
 export class ArticleController {
   constructor(private articleService: ArticleService, private readonly commentService: CommentService) {}
 
+
   @Get()
   @ApiCreatedResponse({ type: [GetArticleLightDto] })
-  findAll() {
-    return this.articleService.getArticles();
+  findAll(@Query('category', ValidateCategoryPipe) category?: Categories){
+    return this.articleService.getArticles(category)
   }
 
   @Post()

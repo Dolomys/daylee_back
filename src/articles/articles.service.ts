@@ -10,6 +10,7 @@ import { CommentService } from './comments/comments.service';
 import { CreateArticleDto } from './dto/request/create-article.dto';
 import { UpdateArticleDto } from './dto/request/update-article.dto';
 import { GetArticleDto } from './dto/response/get-article.dto';
+import { Categories } from './utils/category.enum';
 
 @Injectable()
 export class ArticleService {
@@ -23,8 +24,6 @@ export class ArticleService {
 
   async isOwner(user: UserDocument, articleId: string): Promise<boolean> {
     const article = await this.getArticleById(articleId);
-    console.log(article);
-    console.log(user);
     return article.owner.id === user.id;
   }
 
@@ -37,10 +36,19 @@ export class ArticleService {
     return this.articleRepository.findOneById(articleId);
   }
 
-  getArticles() {
+  getArticlesNoFilter() {
     return this.articleRepository
       .findAll()
       .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
+  }
+
+  getArticles(category?: Categories){
+    if(category)
+      return this.articleRepository
+      .findAll({category: category})
+      .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
+    else
+    return this.getArticlesNoFilter()
   }
 
   async createArticle(createArticleDto: CreateArticleDto, user: UserDocument) {

@@ -16,8 +16,8 @@ export class ArticleRepository {
     return this.articleModel.create(article);
   }
 
-  findAll(): Promise<ArticleDocument[]> {
-    return this.articleModel.find().populate('owner').exec();
+  findAll(articleFilterQuery?: FilterQuery<Article>): Promise<ArticleDocument[]>{
+    return this.articleModel.find(articleFilterQuery ?? {}).populate('owner').exec()
   }
 
   findOneById(articleId: string): Promise<ArticleDocument> {

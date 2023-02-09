@@ -23,7 +23,7 @@ export class CommentService {
 
   getArticleComments(article: Article): Promise<GetCommentaryDto[]> {
     return this.commentRepository
-      .findComments({ article: article })
+      .findCommentsByArticle(article)
       .then((commentList) => commentList.map((comment) => this.commentMapper.toGetCommentDto(comment)));
   }
 }

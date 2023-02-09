@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Categories } from 'src/articles/utils/category.enum';
 
 export class CreateArticleDto {
   @ApiProperty()
@@ -11,6 +12,11 @@ export class CreateArticleDto {
   @IsString()
   @IsNotEmpty()
   content: string;
+
+  @ApiProperty({ enum: ['Sport', 'Manga', 'Lifestyle', 'Various']})
+  @IsEnum(Categories)
+  @IsNotEmpty()
+  category: Categories = Categories.Various
 
   @ApiProperty()
   @IsString()
