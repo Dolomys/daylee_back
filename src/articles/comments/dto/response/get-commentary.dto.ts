@@ -1,19 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsObject, IsString } from 'class-validator';
+import { GetUserDto } from 'src/users/dto/response/get-user-auth.dto';
 
 export class GetCommentaryDto {
   @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
   content: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsObject()
-  owner: object;
+  @ApiProperty({type: GetUserDto})
+  owner: GetUserDto;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsObject()
   id: string;
 }

@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray } from 'class-validator';
+import { GetArticleLightDto } from './get-article.dto';
 
 export class GetAllArticlesDto {
-  @ApiProperty()
-  @IsArray()
-  articles: any[];
+  @ApiProperty({type: [GetArticleLightDto]})
+  articles: GetArticleLightDto[];
 }

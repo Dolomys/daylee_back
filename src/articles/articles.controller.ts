@@ -21,9 +21,11 @@ import { ArticleDocument } from './article.schema';
 import { ArticleService } from './articles.service';
 import { CommentService } from './comments/comments.service';
 import { CreateCommentaryDto } from './comments/dto/request/create-commentary.dto';
+import { GetCommentaryDto } from './comments/dto/response/get-commentary.dto';
 import { CreateArticleDto } from './dto/request/create-article.dto';
 import { UpdateArticleDto } from './dto/request/update-article.dto';
-import { GetArticleDto } from './dto/response/get-article.dto';
+import { GetArticleDto, GetArticleLightDto } from './dto/response/get-article.dto';
+import { ArticleOwnerGuard } from './utils/isOwner.guard';
 
 @ApiTags('Articles')
 @Controller('articles')
@@ -33,13 +35,13 @@ export class ArticleController {
     private readonly commentService: CommentService) {}
 
   @Get()
-  @ApiCreatedResponse({type: [GetArticleDto]})
+  @ApiCreatedResponse({type: [GetArticleLightDto]})
   findAll() {
     return this.articleService.getArticles();
   }
 
   @Post()
-  @ApiCreatedResponse({description: 'article created', type: GetArticleDto})
+  @ApiCreatedResponse({type: GetArticleDto})
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   create(@Body() createArticleDto: CreateArticleDto, @ConnectedUser() user: UserDocument) {
@@ -48,16 +50,16 @@ export class ArticleController {
 
   @Get(':articleId')
   @ApiCreatedResponse({type: GetArticleDto})
-  @ApiParam({ name: 'article Id', type: String })
+  @ApiParam({ name: 'articleId', type: String })
   getOne(@Param('articleId', ArticleByIdPipe) article: ArticleDocument) {
-    return article;
+    return this.articleService.getArticleWithComments(article)
   }
 
   @Put(':articleId')
-  @ApiCreatedResponse({description: 'article updated',type: GetArticleDto})
+  @ApiCreatedResponse({type: GetArticleDto})
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @ApiParam({ name: 'article Id', type: String })
+  @UseGuards(JwtAuthGuard, ArticleOwnerGuard)
+  @ApiParam({ name: 'articleId', type: String })
   update(
     @Param('articleId', ArticleByIdPipe) articleToUpdate: ArticleDocument,
     @Body() updateArticleDto: UpdateArticleDto,
@@ -67,7 +69,7 @@ export class ArticleController {
 
   @Delete(':articleId')
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, ArticleOwnerGuard)
   delete(@Param('articleId') articleId: string) {
     this.articleService.deleteArticle(articleId);
 
@@ -78,6 +80,7 @@ export class ArticleController {
   }
 
   @Post(':articleId/comment')
+  @ApiCreatedResponse({type: GetCommentaryDto})
   @UseGuards(JwtAuthGuard)
   async addComment(
     @Param('articleId', ArticleByIdPipe) article: ArticleDocument,

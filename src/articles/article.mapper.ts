@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { UserMapper } from 'src/users/user.mapper';
-import { UsersRepository } from 'src/users/users.repository';
 import { ArticleDocument } from './article.schema';
 import { GetCommentaryDto } from './comments/dto/response/get-commentary.dto';
 import { GetArticleDto, GetArticleLightDto } from './dto/response/get-article.dto';
 
 @Injectable()
 export class ArticleMapper {
-  constructor(private readonly userRepository: UsersRepository, private readonly userMapper: UserMapper) {}
+  constructor( private readonly userMapper: UserMapper) {}
 
   toGetArticleDto = (
     article: ArticleDocument,
@@ -23,7 +22,6 @@ export class ArticleMapper {
 
   toGetArticleLightDto = (
     article: ArticleDocument,
-    comments: GetCommentaryDto[] | null = null,
   ): GetArticleLightDto => ({
     id: article._id,
     title: article.title,

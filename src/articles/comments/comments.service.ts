@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { UserDocument } from 'src/users/user.schema';
-import { ArticleDocument } from '../article.schema';
+import { Article, ArticleDocument } from '../article.schema';
 import { CommentMapper } from './comment.mapper';
 import { Comment } from './comment.schema';
 import { CommentRepository } from './comments.repository';
 import { CreateCommentaryDto } from './dto/request/create-commentary.dto';
+import { GetCommentaryDto } from './dto/response/get-commentary.dto';
 
 @Injectable()
 export class CommentService {
@@ -25,5 +26,15 @@ export class CommentService {
     };
     const result = await this.commentRepository.addComment(newComment);
     return this.commentMapper.toGetCommentDto(result);
+  }
+
+  getArticleComments(article: Article): Promise<GetCommentaryDto[]> {
+    return this.commentRepository
+      .findComments({ article: article })
+      .then((commentList) =>
+        commentList.map((comment) =>
+          this.commentMapper.toGetCommentDto(comment),
+        ),
+      );
   }
 }
