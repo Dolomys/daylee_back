@@ -14,11 +14,10 @@ export class CommentRepository {
   }
 
   findCommentsByArticle(article: Article): Promise<CommentDocument[]> {
-    return this.commentModel.find({article: article}).populate('owner').exec();
+    return this.commentModel.find({ article: article }).populate('owner').exec();
   }
 
-  findCommentsByOwner(owner: UserDocument):Promise<CommentDocument[]> {
-    return this.commentModel.find({owner: owner}).populate('article').exec()
+  findCommentsByOwner(owner: UserDocument): Promise<CommentDocument[]> {
+    return this.commentModel.find({ owner: owner }).populate('article').exec();
   }
-  
 }

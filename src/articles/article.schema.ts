@@ -8,19 +8,19 @@ export type ArticleDocument = HydratedDocument<Article>;
 
 @Schema()
 export class Article {
-  @Prop({ required: true, index: "text" })
+  @Prop({ required: true })
   title: string;
 
-  @Prop({ required: true, index: "text" })
+  @Prop({ required: true })
   content: string;
 
   @Prop()
   photoUrl?: string;
 
-  @Prop({index: "text"})
-  category: Categories
+  @Prop()
+  category: Categories;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: "text" })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   owner: UserDocument;
 
   @Prop()
@@ -28,4 +28,4 @@ export class Article {
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);
-ArticleSchema.index
+ArticleSchema.index;

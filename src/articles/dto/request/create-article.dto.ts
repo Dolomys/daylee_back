@@ -13,10 +13,10 @@ export class CreateArticleDto {
   @IsNotEmpty()
   content: string;
 
-  @ApiProperty({ enum: ['Sport', 'Manga', 'Lifestyle', 'Various']})
+  @ApiProperty({ enum: ['Sport', 'Manga', 'Lifestyle', 'Various'] })
   @IsEnum(Categories)
   @IsNotEmpty()
-  category: Categories = Categories.Various
+  category: Categories = Categories.Various;
 
   @ApiProperty()
   @IsString()

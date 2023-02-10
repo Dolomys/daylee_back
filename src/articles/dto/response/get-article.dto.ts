@@ -35,7 +35,7 @@ export class GetArticleLightDto {
   title: string;
 
   @ApiProperty()
-  category: Categories
+  category: Categories;
 
   @ApiProperty()
   owner: GetUserDto;

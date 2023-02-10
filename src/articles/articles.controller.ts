@@ -1,10 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete, Get,
-  Param, Post,
-  Put, Query, UploadedFile, UseInterceptors
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Auth, AuthOwner } from 'src/auth/utils/auth.decorator';
@@ -30,14 +24,13 @@ import { ValidateSearchPipe } from './utils/search.pipe';
 export class ArticleController {
   constructor(private articleService: ArticleService, private readonly commentService: CommentService) {}
 
-
   @Get()
   @ApiCreatedResponse({ type: [GetArticleLightDto] })
   findAll(
     @Query('search', ValidateSearchPipe) search: string,
     @Query('category', ValidateCategoryPipe) category: Categories,
-    ){
-    return this.articleService.getArticles(category, search)
+  ) {
+    return this.articleService.getArticles(category, search);
   }
 
   @Post()
@@ -63,9 +56,11 @@ export class ArticleController {
   @ApiCreatedResponse({ type: GetArticleDto })
   @AuthOwner()
   @ApiParam({ name: 'articleId', type: String })
-  @UseInterceptors(FileInterceptor('file', {
-    fileFilter: fileFilter
-  }))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      fileFilter: fileFilter,
+    }),
+  )
   update(
     @Param('articleId', ArticleByIdPipe) articleToUpdate: ArticleDocument,
     @Body() updateArticleDto: UpdateArticleDto,

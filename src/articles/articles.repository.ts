@@ -8,16 +8,15 @@ export class ArticleRepository {
   constructor(@InjectModel(Article.name) private articleModel: Model<ArticleDocument>) {}
 
   async orThrow<T>(x: T | null) {
-    if (x == null) 
-      throw new NotFoundException('Article not found');
+    if (x == null) throw new NotFoundException('Article not found');
     return x;
   }
 
-  async orThrowArray<T>(x:T[]){
-    if(x.length == 0) {
+  async orThrowArray<T>(x: T[]) {
+    if (x.length == 0) {
       throw new NotFoundException('No article found');
     }
-    return x
+    return x;
   }
 
   create(article: Article): Promise<ArticleDocument> {
@@ -26,20 +25,22 @@ export class ArticleRepository {
 
   findWithQuery(articleFilterQuery: FilterQuery<Article>): Promise<ArticleDocument[]> {
     const mongoQuery = [
-      { "$lookup": {
-        "from": 'users',
-        "as": 'owner',
-        "localField": 'owner',
-        "foreignField": "_id"
-      }},
-      { "$match": articleFilterQuery },
-      { "$unwind": '$owner' }
+      {
+        $lookup: {
+          from: 'users',
+          as: 'owner',
+          localField: 'owner',
+          foreignField: '_id',
+        },
+      },
+      { $match: articleFilterQuery },
+      { $unwind: '$owner' },
     ];
-    return this.articleModel.aggregate(mongoQuery).exec().then(this.orThrowArray)
+    return this.articleModel.aggregate(mongoQuery).exec().then(this.orThrowArray);
   }
 
-  findAll(): Promise<ArticleDocument[]>{
-    return this.articleModel.find().populate('owner').exec().then(this.orThrowArray)
+  findAll(): Promise<ArticleDocument[]> {
+    return this.articleModel.find().populate('owner').exec().then(this.orThrowArray);
   }
 
   findOneById(articleId: string): Promise<ArticleDocument> {

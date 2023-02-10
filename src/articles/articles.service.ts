@@ -43,22 +43,25 @@ export class ArticleService {
       .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
   }
 
-  getArticleWithQuery(articleFilterQuery: FilterQuery<Article>){
+  getArticleWithQuery(articleFilterQuery: FilterQuery<Article>) {
     return this.articleRepository
-    .findWithQuery(articleFilterQuery)
-    .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
+      .findWithQuery(articleFilterQuery)
+      .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
   }
 
-  getArticles(category?: Categories, search?: string){
-    if(category && search)
-      return this.getArticleWithQuery({category: category, $or: [{title: {$regex: search} },{content: {$regex: search}}, {'owner.username': {$regex: search}}] })
-    if(category)
-      return this.getArticleWithQuery({category: category})
-    else if(search){
-      search = `(?i).*${search}.*`
-      return this.getArticleWithQuery({ $or: [{title: {$regex: search} },{content: {$regex: search}}, {'owner.username': {$regex: search}}] })
-    }else
-      return this.getArticlesNoFilter()
+  getArticles(category?: Categories, search?: string) {
+    if (category && search)
+      return this.getArticleWithQuery({
+        category: category,
+        $or: [{ title: { $regex: search } }, { content: { $regex: search } }, { 'owner.username': { $regex: search } }],
+      });
+    if (category) return this.getArticleWithQuery({ category: category });
+    else if (search) {
+      search = `(?i).*${search}.*`;
+      return this.getArticleWithQuery({
+        $or: [{ title: { $regex: search } }, { content: { $regex: search } }, { 'owner.username': { $regex: search } }],
+      });
+    } else return this.getArticlesNoFilter();
   }
 
   async createArticle(createArticleDto: CreateArticleDto, user: UserDocument) {

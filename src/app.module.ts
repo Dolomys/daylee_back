@@ -10,17 +10,17 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ 
+    ConfigModule.forRoot({
       envFilePath: './env/.env',
       load: [cloudinaryConfig],
-      isGlobal: true 
-      }),
+      isGlobal: true,
+    }),
     MongooseModule.forRootAsync({
       useFactory: async (config: ConfigService) => ({
-        uri: config.get('MONGODB_URL')
+        uri: config.get('MONGODB_URL'),
       }),
       inject: [ConfigService],
-     }),
+    }),
     ArticleModule,
     CommentsModule,
     AuthModule,

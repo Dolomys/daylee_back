@@ -12,9 +12,9 @@ export function Auth() {
 }
 
 export function AuthOwner() {
-    return applyDecorators(
-      UseGuards(JwtAuthGuard,ArticleOwnerGuard),
-      ApiBearerAuth(),
-      ApiUnauthorizedResponse({ description: 'Unauthorized' }),
-    );
-  }
+  return applyDecorators(
+    UseGuards(JwtAuthGuard, ArticleOwnerGuard),
+    ApiBearerAuth(),
+    ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+  );
+}
