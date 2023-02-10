@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import cloudinaryConfig from 'env/cloudinary.config';
 import { ArticleModule } from './articles/articles.module';
 import { CommentsModule } from './articles/comments/comments.module';
 import { AuthModule } from './auth/auth.module';
@@ -9,7 +10,11 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ envFilePath: './env/.env', isGlobal: true }),
+    ConfigModule.forRoot({ 
+      envFilePath: './env/.env',
+      load: [cloudinaryConfig],
+      isGlobal: true 
+      }),
     MongooseModule.forRootAsync({
       useFactory: async (config: ConfigService) => ({
         uri: config.get('MONGODB_URL')

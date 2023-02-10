@@ -1,4 +1,4 @@
-import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
+import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { CloudinaryService } from './cloudinary.service';
 
 @Injectable()
@@ -7,8 +7,12 @@ export class UploadCloudinaryPipe implements PipeTransform {
 
   async transform(value: any, metadata: ArgumentMetadata) {
     if (value) {
-      const apiResponse = await this.CloudinaryService.uploadImage(value);
-      return apiResponse.url;
+      try{
+        const apiResponse = await this.CloudinaryService.uploadImage(value);
+        return apiResponse.url;
+      }catch(err){
+        throw new BadRequestException(err)
+      }
     }
   }
 }
