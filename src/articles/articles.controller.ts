@@ -1,8 +1,7 @@
 import {
   Body,
   Controller,
-  Delete,
-  Get,
+  Delete, Get,
   Param, Post,
   Put, Query, UploadedFile,
   UseGuards,
@@ -25,6 +24,7 @@ import { GetArticleDto, GetArticleLightDto } from './dto/response/get-article.dt
 import { ArticleByIdPipe } from './utils/article.pipe';
 import { Categories } from './utils/category/category.enum';
 import { ValidateCategoryPipe } from './utils/category/category.pipe';
+import { fileFilter } from './utils/file.filter';
 import { ArticleOwnerGuard } from './utils/isOwner.guard';
 import { ValidateSearchPipe } from './utils/search.pipe';
 
@@ -68,7 +68,9 @@ export class ArticleController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, ArticleOwnerGuard)
   @ApiParam({ name: 'articleId', type: String })
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', {
+    fileFilter: fileFilter
+  }))
   update(
     @Param('articleId', ArticleByIdPipe) articleToUpdate: ArticleDocument,
     @Body() updateArticleDto: UpdateArticleDto,
