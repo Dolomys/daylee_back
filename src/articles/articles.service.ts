@@ -42,11 +42,19 @@ export class ArticleService {
       .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
   }
 
-  getArticles(category?: Categories){
+  getArticlesSearch(search: string){
+    return this.articleRepository
+    .findAll({ $text: { $search: search } })
+    .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
+  }
+
+  getArticles(category?: Categories, search?: string){
     if(category)
       return this.articleRepository
       .findAll({category: category})
       .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
+    else if(search)
+     return this.getArticlesSearch(search)
     else
     return this.getArticlesNoFilter()
   }

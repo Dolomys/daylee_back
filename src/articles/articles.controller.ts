@@ -35,8 +35,11 @@ export class ArticleController {
 
   @Get()
   @ApiCreatedResponse({ type: [GetArticleLightDto] })
-  findAll(@Query('category', ValidateCategoryPipe) category?: Categories){
-    return this.articleService.getArticles(category)
+  findAll(
+    @Query('search') search: string,
+    @Query('category', ValidateCategoryPipe) category?: Categories,
+    ){
+    return this.articleService.getArticles(category, search)
   }
 
   @Post()

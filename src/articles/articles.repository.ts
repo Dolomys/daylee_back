@@ -17,11 +17,11 @@ export class ArticleRepository {
   }
 
   findAll(articleFilterQuery?: FilterQuery<Article>): Promise<ArticleDocument[]>{
-    return this.articleModel.find(articleFilterQuery ?? {}).populate('owner').exec()
+    return this.articleModel.find(articleFilterQuery ?? {}).exec()
   }
 
   findOneById(articleId: string): Promise<ArticleDocument> {
-    return this.articleModel.findOne({ _id: articleId }).populate('owner').exec().then(this.orThrow);
+    return this.articleModel.findOne({ _id: articleId }).exec().then(this.orThrow);
   }
 
   update(articleToUpdate: ArticleDocument, newArticle: Partial<Article>): Promise<ArticleDocument> {
