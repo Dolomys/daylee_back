@@ -11,7 +11,7 @@ import { CommentService } from './comments/comments.service';
 import { CreateArticleDto } from './dto/request/create-article.dto';
 import { UpdateArticleDto } from './dto/request/update-article.dto';
 import { GetArticleDto } from './dto/response/get-article.dto';
-import { Categories } from './utils/category.enum';
+import { Categories } from './utils/category/category.enum';
 
 @Injectable()
 export class ArticleService {

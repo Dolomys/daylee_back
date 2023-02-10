@@ -8,8 +8,16 @@ export class ArticleRepository {
   constructor(@InjectModel(Article.name) private articleModel: Model<ArticleDocument>) {}
 
   async orThrow<T>(x: T | null) {
-    if (x == null) throw new NotFoundException('Article not found');
+    if (x == null) 
+      throw new NotFoundException('Article not found');
     return x;
+  }
+
+  async orThrowArray<T>(x:T[]){
+    if(x.length == 0) {
+      throw new NotFoundException('No article found');
+    }
+    return x
   }
 
   create(article: Article): Promise<ArticleDocument> {
@@ -27,11 +35,11 @@ export class ArticleRepository {
       { "$match": articleFilterQuery },
       { "$unwind": '$owner' }
     ];
-    return this.articleModel.aggregate(mongoQuery).exec()
+    return this.articleModel.aggregate(mongoQuery).exec().then(this.orThrowArray)
   }
 
   findAll(): Promise<ArticleDocument[]>{
-    return this.articleModel.find().exec()
+    return this.articleModel.find().exec().then(this.orThrowArray)
   }
 
   findOneById(articleId: string): Promise<ArticleDocument> {

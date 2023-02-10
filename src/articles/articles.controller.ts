@@ -14,7 +14,6 @@ import { ConnectedUser } from 'src/auth/customAuth.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.gard';
 import { UploadCloudinaryPipe } from 'src/cloudinary/cloudinary.pipe';
 import { UserDocument } from 'src/users/user.schema';
-import { ArticleByIdPipe } from './article.pipe';
 import { ArticleDocument } from './article.schema';
 import { ArticleService } from './articles.service';
 import { CommentService } from './comments/comments.service';
@@ -23,8 +22,9 @@ import { GetCommentaryDto } from './comments/dto/response/get-commentary.dto';
 import { CreateArticleDto } from './dto/request/create-article.dto';
 import { UpdateArticleDto } from './dto/request/update-article.dto';
 import { GetArticleDto, GetArticleLightDto } from './dto/response/get-article.dto';
-import { Categories } from './utils/category.enum';
-import { ValidateCategoryPipe } from './utils/category.pipe';
+import { ArticleByIdPipe } from './utils/article.pipe';
+import { Categories } from './utils/category/category.enum';
+import { ValidateCategoryPipe } from './utils/category/category.pipe';
 import { ArticleOwnerGuard } from './utils/isOwner.guard';
 import { ValidateSearchPipe } from './utils/search.pipe';
 
@@ -38,7 +38,7 @@ export class ArticleController {
   @ApiCreatedResponse({ type: [GetArticleLightDto] })
   findAll(
     @Query('search', ValidateSearchPipe) search: string,
-    @Query('category', ValidateCategoryPipe) category?: Categories,
+    @Query('category', ValidateCategoryPipe) category: Categories,
     ){
     return this.articleService.getArticles(category, search)
   }

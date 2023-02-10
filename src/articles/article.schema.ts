@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { UserDocument } from 'src/users/user.schema';
 import { GetCommentaryDto } from './comments/dto/response/get-commentary.dto';
-import { Categories } from './utils/category.enum';
+import { Categories } from './utils/category/category.enum';
 
 export type ArticleDocument = HydratedDocument<Article>;
 

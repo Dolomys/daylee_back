@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { GetCommentaryDto } from 'src/articles/comments/dto/response/get-commentary.dto';
-import { Categories } from 'src/articles/utils/category.enum';
+import { Categories } from 'src/articles/utils/category/category.enum';
 import { GetUserDto } from 'src/users/dto/response/get-user-auth.dto';
 
 export class GetArticleDto {
