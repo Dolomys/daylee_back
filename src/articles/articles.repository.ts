@@ -18,13 +18,13 @@ export class ArticleRepository {
 
   findWithQuery(articleFilterQuery: FilterQuery<Article>): Promise<ArticleDocument[]> {
     const mongoQuery = [
-      { "$match": articleFilterQuery },
       { "$lookup": {
         "from": 'users',
         "as": 'owner',
         "localField": 'owner',
         "foreignField": "_id"
       }},
+      { "$match": articleFilterQuery },
       { "$unwind": '$owner' }
     ];
     return this.articleModel.aggregate(mongoQuery).exec()

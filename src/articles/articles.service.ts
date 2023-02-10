@@ -51,12 +51,13 @@ export class ArticleService {
 
   getArticles(category?: Categories, search?: string){
     if(category && search)
-      return this.getArticleWithQuery({category: category, $text: { $search: `.*${search}.*` } })
+      return this.getArticleWithQuery({category: category, $or: [{title: {$regex: search} },{content: {$regex: search}}, {'owner.username': {$regex: search}}] })
     if(category)
       return this.getArticleWithQuery({category: category})
-    else if(search)
-      return this.getArticleWithQuery({ $text: { $search: `.*${search}.*` } })
-    else
+    else if(search){
+      search = `(?i).*${search}.*`
+      return this.getArticleWithQuery({ $or: [{title: {$regex: search} },{content: {$regex: search}}, {'owner.username': {$regex: search}}] })
+    }else
       return this.getArticlesNoFilter()
   }
 

@@ -26,6 +26,7 @@ import { GetArticleDto, GetArticleLightDto } from './dto/response/get-article.dt
 import { Categories } from './utils/category.enum';
 import { ValidateCategoryPipe } from './utils/category.pipe';
 import { ArticleOwnerGuard } from './utils/isOwner.guard';
+import { ValidateSearchPipe } from './utils/search.pipe';
 
 @ApiTags('Articles')
 @Controller('articles')
@@ -36,7 +37,7 @@ export class ArticleController {
   @Get()
   @ApiCreatedResponse({ type: [GetArticleLightDto] })
   findAll(
-    @Query('search') search: string,
+    @Query('search', ValidateSearchPipe) search: string,
     @Query('category', ValidateCategoryPipe) category?: Categories,
     ){
     return this.articleService.getArticles(category, search)
