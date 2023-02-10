@@ -3,14 +3,12 @@ import {
   Controller,
   Delete, Get,
   Param, Post,
-  Put, Query, UploadedFile,
-  UseGuards,
-  UseInterceptors
+  Put, Query, UploadedFile, UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
-import { ConnectedUser } from 'src/auth/customAuth.decorator';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.gard';
+import { ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Auth, AuthOwner } from 'src/auth/utils/auth.decorator';
+import { ConnectedUser } from 'src/auth/utils/customAuth.decorator';
 import { UploadCloudinaryPipe } from 'src/cloudinary/cloudinary.pipe';
 import { UserDocument } from 'src/users/user.schema';
 import { ArticleDocument } from './article.schema';
@@ -25,7 +23,6 @@ import { ArticleByIdPipe } from './utils/article.pipe';
 import { Categories } from './utils/category/category.enum';
 import { ValidateCategoryPipe } from './utils/category/category.pipe';
 import { fileFilter } from './utils/file.filter';
-import { ArticleOwnerGuard } from './utils/isOwner.guard';
 import { ValidateSearchPipe } from './utils/search.pipe';
 
 @ApiTags('Articles')
@@ -45,8 +42,7 @@ export class ArticleController {
 
   @Post()
   @ApiCreatedResponse({ type: GetArticleDto })
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @Auth()
   @UseInterceptors(FileInterceptor('file'))
   create(
     @Body() createArticleDto: CreateArticleDto,
@@ -65,8 +61,7 @@ export class ArticleController {
 
   @Put(':articleId')
   @ApiCreatedResponse({ type: GetArticleDto })
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, ArticleOwnerGuard)
+  @AuthOwner()
   @ApiParam({ name: 'articleId', type: String })
   @UseInterceptors(FileInterceptor('file', {
     fileFilter: fileFilter
@@ -80,11 +75,9 @@ export class ArticleController {
   }
 
   @Delete(':articleId')
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, ArticleOwnerGuard)
+  @AuthOwner()
   delete(@Param('articleId') articleId: string) {
     this.articleService.deleteArticle(articleId);
-
     return {
       statusCode: 204,
       message: 'article deleted',
@@ -93,7 +86,7 @@ export class ArticleController {
 
   @Post(':articleId/comment')
   @ApiCreatedResponse({ type: GetCommentaryDto })
-  @UseGuards(JwtAuthGuard)
+  @Auth()
   async addComment(
     @Param('articleId', ArticleByIdPipe) article: ArticleDocument,
     @Body() createCommentaryDto: CreateCommentaryDto,
