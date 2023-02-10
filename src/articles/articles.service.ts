@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Inject } from '@nestjs/common/decorators';
 import { forwardRef } from '@nestjs/common/utils';
+import { FilterQuery } from 'mongoose';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UserDocument } from 'src/users/user.schema';
 import { ArticleMapper } from './article.mapper';
@@ -42,21 +43,21 @@ export class ArticleService {
       .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
   }
 
-  getArticlesSearch(search: string){
+  getArticleWithQuery(articleFilterQuery: FilterQuery<Article>){
     return this.articleRepository
-    .findAll({ $text: { $search: search } })
+    .findWithQuery(articleFilterQuery)
     .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
   }
 
   getArticles(category?: Categories, search?: string){
+    if(category && search)
+      return this.getArticleWithQuery({category: category, $text: { $search: `.*${search}.*` } })
     if(category)
-      return this.articleRepository
-      .findAll({category: category})
-      .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
+      return this.getArticleWithQuery({category: category})
     else if(search)
-     return this.getArticlesSearch(search)
+      return this.getArticleWithQuery({ $text: { $search: `.*${search}.*` } })
     else
-    return this.getArticlesNoFilter()
+      return this.getArticlesNoFilter()
   }
 
   async createArticle(createArticleDto: CreateArticleDto, user: UserDocument) {

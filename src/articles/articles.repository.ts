@@ -16,8 +16,22 @@ export class ArticleRepository {
     return this.articleModel.create(article);
   }
 
-  findAll(articleFilterQuery?: FilterQuery<Article>): Promise<ArticleDocument[]>{
-    return this.articleModel.find(articleFilterQuery ?? {}).exec()
+  findWithQuery(articleFilterQuery: FilterQuery<Article>): Promise<ArticleDocument[]> {
+    const mongoQuery = [
+      { "$match": articleFilterQuery },
+      { "$lookup": {
+        "from": 'users',
+        "as": 'owner',
+        "localField": 'owner',
+        "foreignField": "_id"
+      }},
+      { "$unwind": '$owner' }
+    ];
+    return this.articleModel.aggregate(mongoQuery).exec()
+  }
+
+  findAll(): Promise<ArticleDocument[]>{
+    return this.articleModel.find().exec()
   }
 
   findOneById(articleId: string): Promise<ArticleDocument> {
