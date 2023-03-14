@@ -1,5 +1,5 @@
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
-import { UsersRepository } from './users.repository';
+import { UsersRepository } from '../users.repository';
 
 @Injectable()
 export class UserByIdPipe implements PipeTransform {

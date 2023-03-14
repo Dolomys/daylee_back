@@ -18,8 +18,8 @@ async function bootstrap() {
     .useGlobalFilters(new MongoExceptionFilter());
 
   const config = new DocumentBuilder()
-    .setTitle('Blog tuto')
-    .setDescription('Blog API description')
+    .setTitle('Daylee')
+    .setDescription('Daylee API description')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

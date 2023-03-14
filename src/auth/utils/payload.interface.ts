@@ -1,4 +1,6 @@
+import { Types } from "mongoose";
+
 export interface PayloadInterface {
-  id: string;
+  id: Types.ObjectId;
   username: string;
 }

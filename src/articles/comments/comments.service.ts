@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserDocument } from 'src/users/user.schema';
 import { Article, ArticleDocument } from '../article.schema';
 import { CommentMapper } from './comment.mapper';
-import { Comment } from './comment.schema';
+import { Comment, CommentDocument } from './comment.schema';
 import { CommentRepository } from './comments.repository';
 import { CreateCommentaryDto } from './dto/request/create-commentary.dto';
 import { GetCommentaryDto } from './dto/response/get-commentary.dto';
@@ -11,9 +11,14 @@ import { GetCommentaryDto } from './dto/response/get-commentary.dto';
 export class CommentService {
   constructor(private readonly commentRepository: CommentRepository, private readonly commentMapper: CommentMapper) {}
 
-  async addComment(user: UserDocument, createCommentaryDto: CreateCommentaryDto, article: ArticleDocument) {
+  async addComment(
+    user: UserDocument,
+    createCommentaryDto: CreateCommentaryDto,
+    article: ArticleDocument,
+    parentComment?: CommentDocument) {
     const newComment: Comment = {
       ...createCommentaryDto,
+      parentComment: parentComment,
       owner: user,
       article: article,
     };
@@ -24,6 +29,19 @@ export class CommentService {
   getArticleComments(article: Article): Promise<GetCommentaryDto[]> {
     return this.commentRepository
       .findCommentsByArticle(article)
-      .then((commentList) => commentList.map((comment) => this.commentMapper.toGetCommentDto(comment)));
+      .then((commentList) => commentList.map((comment) => (
+        this.commentMapper.toGetCommentDto(comment)
+        )));
+  }
+
+  getCommentResponses(comment: Comment): Promise<GetCommentaryDto[]>{
+    return this.commentRepository
+      .findCommentsResponse(comment)
+      .then(commentList => commentList.map(comment => this.commentMapper.toGetCommentDto(comment)))
+  }
+
+
+  getCommentById(commentId: string): Promise<CommentDocument> {
+    return this.commentRepository.findCommentById(commentId)
   }
 }

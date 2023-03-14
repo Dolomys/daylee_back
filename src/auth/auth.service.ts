@@ -1,19 +1,26 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { LoginUserDto } from 'src/users/dto/request/login-user.dto';
-import { GetUserDto } from 'src/users/dto/response/get-user-auth.dto';
 import { UserMapper } from 'src/users/user.mapper';
 import { User, UserDocument } from 'src/users/user.schema';
+import { UsersRepository } from 'src/users/users.repository';
+import { CreateUserDto } from 'src/users/utils/dto/request/create-user.dto';
+import { LoginUserDto } from 'src/users/utils/dto/request/login-user.dto';
+import { GetUserDtoLight } from 'src/users/utils/dto/response/get-user-light.dto';
 import { UsersService } from '../users/users.service';
-import { PayloadInterface } from './payload.interface';
+import { PayloadInterface } from './utils/payload.interface';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService, private userMapper: UserMapper, private jwtService: JwtService) {}
+  constructor(
+    private usersService: UsersService,
+    private userMapper: UserMapper,
+    private jwtService: JwtService,
+    private readonly userRepository: UsersRepository,
+  ) {}
 
   async validateUser(loginUserDto: LoginUserDto): Promise<UserDocument> {
-    const user = await this.usersService.findByUsername(loginUserDto.username);
+    const user = await this.userRepository.findOneByUsername(loginUserDto.username);
     if (!user) throw new NotFoundException('User or Password incorrect');
 
     const validated = bcrypt.compareSync(loginUserDto.password, user.password);
@@ -31,10 +38,9 @@ export class AuthService {
     };
   }
 
-  async register(user: User): Promise<GetUserDto> {
+  async register(createUserDto: CreateUserDto): Promise<GetUserDtoLight> {
     const salt = await bcrypt.genSalt(10);
-    const hashedPass = await bcrypt.hash(user.password, salt);
-    user.password = hashedPass;
-    return this.usersService.createUser(user);
+    createUserDto.password = await bcrypt.hash(createUserDto.password, salt);
+    return this.usersService.createUser(createUserDto as User);
   }
 }

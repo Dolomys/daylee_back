@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Inject } from '@nestjs/common/decorators';
-import { forwardRef } from '@nestjs/common/utils';
-import { FilterQuery } from 'mongoose';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UserDocument } from 'src/users/user.schema';
 import { ArticleMapper } from './article.mapper';
@@ -11,7 +8,6 @@ import { CommentService } from './comments/comments.service';
 import { CreateArticleDto } from './dto/request/create-article.dto';
 import { UpdateArticleDto } from './dto/request/update-article.dto';
 import { GetArticleDto } from './dto/response/get-article.dto';
-import { Categories } from './utils/category/category.enum';
 
 @Injectable()
 export class ArticleService {
@@ -19,8 +15,7 @@ export class ArticleService {
     private readonly cloudinaryService: CloudinaryService,
     private readonly articleRepository: ArticleRepository,
     private readonly articleMapper: ArticleMapper,
-    @Inject(forwardRef(() => CommentService))
-    private commentService: CommentService,
+    private readonly commentService: CommentService,
   ) {}
 
   async isOwner(user: UserDocument, articleId: string): Promise<boolean> {
@@ -37,36 +32,18 @@ export class ArticleService {
     return this.articleRepository.findOneById(articleId);
   }
 
-  getArticlesNoFilter() {
-    return this.articleRepository
+  getArticlesNoFilter = () =>
+    this.articleRepository
       .findAll()
       .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
-  }
-
-  getArticleWithQuery(articleFilterQuery: FilterQuery<Article>) {
-    return this.articleRepository
-      .findWithQuery(articleFilterQuery)
-      .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
-  }
-
-  getArticles(category?: Categories, search?: string) {
-    if (category && search)
-      return this.getArticleWithQuery({
-        category: category,
-        $or: [{ title: { $regex: search } }, { content: { $regex: search } }, { 'owner.username': { $regex: search } }],
-      });
-    if (category) return this.getArticleWithQuery({ category: category });
-    else if (search) {
-      search = `(?i).*${search}.*`;
-      return this.getArticleWithQuery({
-        $or: [{ title: { $regex: search } }, { content: { $regex: search } }, { 'owner.username': { $regex: search } }],
-      });
-    } else return this.getArticlesNoFilter();
-  }
 
   async createArticle(createArticleDto: CreateArticleDto, user: UserDocument) {
+    const responseUpload = await this.cloudinaryService.uploadImage(createArticleDto.image)
+    const photoUrl = responseUpload.url
+    console.log(photoUrl)
     const newArticle: Article = {
       ...createArticleDto,
+      photoUrl: photoUrl,
       owner: user,
     };
 
@@ -74,13 +51,18 @@ export class ArticleService {
     return this.articleMapper.toGetArticleDto(articleCreated);
   }
 
-  async updateArticle(articleToUpdate: ArticleDocument, updateArticleDto: UpdateArticleDto) {
-    return this.articleRepository
+  updateArticle = (articleToUpdate: ArticleDocument, updateArticleDto: UpdateArticleDto) =>
+    this.articleRepository
       .update(articleToUpdate, updateArticleDto)
       .then((updatedArticle) => this.getArticleWithComments(updatedArticle));
-  }
 
-  deleteArticle(articleId: string) {
-    return this.articleRepository.delete({ _id: articleId });
+  deleteArticle = (articleId: string) => this.articleRepository.delete({ _id: articleId });
+
+  addLikeToArticle(article: ArticleDocument, user: UserDocument){
+    if(article.likes?.includes(user._id))
+      return this.articleRepository.removeLike(article, user).then(updatedArticle => this.articleMapper.toGetArticleLightDto(updatedArticle))
+    else
+      return this.articleRepository.addLike(article, user).then(updatedArticle => this.articleMapper.toGetArticleLightDto(updatedArticle))
   }
+    
 }

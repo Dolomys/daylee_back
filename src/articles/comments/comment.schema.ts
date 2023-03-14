@@ -19,6 +19,12 @@ export class Comment {
     required: true,
   })
   article: ArticleDocument;
+
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment'
+  })
+  parentComment?: CommentDocument
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);
