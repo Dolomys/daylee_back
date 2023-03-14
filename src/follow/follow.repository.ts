@@ -22,7 +22,6 @@ export class FollowRepository {
 
   async isFollowing(follower: UserDocument, following: Types.ObjectId) {
     const follow = await this.followModel.findOne({ follower: follower, following: following }).exec();
-    console.log(follow)
     return follow ? true : false;
   }
 
@@ -44,5 +43,5 @@ export class FollowRepository {
     this.followModel.findOneAndDelete({ follower: user, following: following }).exec().then(this.orThrow);
 
   removeFollowerOrThrow = (user: UserDocument, follower: UserDocument) =>
-    this.followModel.findOneAndDelete({ following: user, follower: follower }).exec()
+    this.followModel.findOneAndDelete({ following: user, follower: follower }).exec();
 }
