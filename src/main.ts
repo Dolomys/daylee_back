@@ -1,12 +1,15 @@
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder } from '@nestjs/swagger';
 import { SwaggerModule } from '@nestjs/swagger/dist';
 import { MongoExceptionFilter } from 'utils/mongoExceptions';
 import { AppModule } from './app.module';
+import { SocketIoAdapter } from './chat/socket-io-adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService)
   app
     .useGlobalPipes(
       new ValidationPipe({
@@ -15,7 +18,8 @@ async function bootstrap() {
         transformOptions: { enableImplicitConversion: true },
       }),
     )
-    .useGlobalFilters(new MongoExceptionFilter());
+    .useGlobalFilters(new MongoExceptionFilter())
+    .useWebSocketAdapter(new SocketIoAdapter(app, configService))
 
   const config = new DocumentBuilder()
     .setTitle('Daylee')

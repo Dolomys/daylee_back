@@ -5,6 +5,7 @@ import cloudinaryConfig from 'env/cloudinary.config';
 import { ArticleModule } from './articles/articles.module';
 import { CommentsModule } from './articles/comments/comments.module';
 import { AuthModule } from './auth/auth.module';
+import { ChatModule } from './chat/chat.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { FollowModule } from './follow/follow.module';
 import { UsersModule } from './users/users.module';
@@ -27,7 +28,8 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     UsersModule,
     CloudinaryModule,
-    FollowModule
+    FollowModule,
+    ChatModule
   ],
 })
 export class AppModule {}

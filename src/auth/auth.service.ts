@@ -7,8 +7,8 @@ import { UsersRepository } from 'src/users/users.repository';
 import { CreateUserDto } from 'src/users/utils/dto/request/create-user.dto';
 import { LoginUserDto } from 'src/users/utils/dto/request/login-user.dto';
 import { GetUserDtoLight } from 'src/users/utils/dto/response/get-user-light.dto';
+import { PayloadType } from '../../utils/types';
 import { UsersService } from '../users/users.service';
-import { PayloadInterface } from './utils/payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -31,7 +31,7 @@ export class AuthService {
 
   async login(loginUserDto: LoginUserDto) {
     const user = await this.validateUser(loginUserDto);
-    const payload: PayloadInterface = { username: user.username, id: user.id };
+    const payload: PayloadType = { username: user.username, id: user.id };
     return {
       token: this.jwtService.sign(payload),
       user: this.userMapper.toGetUserDto(user),
