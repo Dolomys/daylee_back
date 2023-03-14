@@ -1,8 +1,8 @@
 import { Controller } from "@nestjs/common/decorators/core/controller.decorator";
-import { Get, Post } from "@nestjs/common/decorators/http/request-mapping.decorator";
+import { Delete, Get, Post } from "@nestjs/common/decorators/http/request-mapping.decorator";
 import { Param } from "@nestjs/common/decorators/http/route-params.decorator";
 import { ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
-import { Protect } from "src/auth/utils/decorator/auth.decorator";
+import { Protect, ProtectFollow } from "src/auth/utils/decorator/auth.decorator";
 import { ConnectedUser } from "src/auth/utils/decorator/customAuth.decorator";
 import { UserDocument } from "src/users/user.schema";
 import { GetUserDtoLight } from "src/users/utils/dto/response/get-user-light.dto";
@@ -29,6 +29,7 @@ export class FollowController {
     getUserFollowing(@ConnectedUser() user: UserDocument) {
       return this.followService.getUserFollowing(user);
     }
+    
   
     @Protect()
     @Post('follow/:userId')
@@ -38,4 +39,24 @@ export class FollowController {
     followUser(@ConnectedUser() user: UserDocument, @Param('userId', UserByIdPipe) userToFollow: UserDocument) {
       return this.followService.followUser(user, userToFollow);
     }
+
+    @ProtectFollow()
+    @Delete('unfollow/:userId')
+    @ApiParam({ name: 'userId', type: String })
+    @ApiOperation({ summary: 'Unfollow user by ID' })
+    @ApiNoContentResponse({ description: 'SUCCESS' })
+    unFollowUser(@ConnectedUser() user: UserDocument, @Param('userId', UserByIdPipe) userToUnfollow: UserDocument) {
+      return this.followService.removeFollowing(user, userToUnfollow);
+    }
+
+    @ProtectFollow()
+    @Delete('removeFollower/:userId')
+    @ApiParam({ name: 'userId', type: String })
+    @ApiOperation({ summary: 'Remove Follower by ID' })
+    @ApiNoContentResponse({ description: 'SUCCESS' })
+    removeFollower(@ConnectedUser() user: UserDocument, @Param('userId', UserByIdPipe) userToUnfollow: UserDocument) {
+      return this.followService.removeFollower(user, userToUnfollow);
+    }
+    
+
 }
