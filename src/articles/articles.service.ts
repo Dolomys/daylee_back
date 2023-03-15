@@ -4,7 +4,6 @@ import { UserDocument } from 'src/users/user.schema';
 import { ArticleMapper } from './article.mapper';
 import { Article, ArticleDocument } from './article.schema';
 import { ArticleRepository } from './articles.repository';
-import { CommentService } from './comments/comments.service';
 import { CreateArticleDto } from './dto/request/create-article.dto';
 import { UpdateArticleDto } from './dto/request/update-article.dto';
 import { GetArticleDto } from './dto/response/get-article.dto';
@@ -15,7 +14,6 @@ export class ArticleService {
     private readonly cloudinaryService: CloudinaryService,
     private readonly articleRepository: ArticleRepository,
     private readonly articleMapper: ArticleMapper,
-    private readonly commentService: CommentService,
   ) {}
 
   async isOwner(user: UserDocument, articleId: string): Promise<boolean> {
@@ -23,14 +21,10 @@ export class ArticleService {
     return article.owner.id === user.id;
   }
 
-  async getArticleWithComments(article: ArticleDocument): Promise<GetArticleDto> {
-    const comments = await this.commentService.getArticleComments(article);
-    return this.articleMapper.toGetArticleDto(article, comments);
-  }
+  getArticleWithComments = (article: ArticleDocument): Promise<GetArticleDto> =>
+    this.articleMapper.toGetArticleDto(article);
 
-  getArticleById(articleId: string): Promise<ArticleDocument> {
-    return this.articleRepository.findOneById(articleId);
-  }
+  getArticleById = (articleId: string): Promise<ArticleDocument> => this.articleRepository.findOneById(articleId);
 
   getArticles = () =>
     this.articleRepository
