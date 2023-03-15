@@ -1,76 +1,72 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
-import { Auth, AuthOwner } from 'src/auth/utils/auth.decorator';
-import { ConnectedUser } from 'src/auth/utils/customAuth.decorator';
-import { UploadCloudinaryPipe } from 'src/cloudinary/cloudinary.pipe';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { ApiConsumes, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { FormDataRequest } from 'nestjs-form-data/dist/decorators';
+import { Protect, ProtectOwner } from 'src/auth/utils/decorator/auth.decorator';
+import { ConnectedUser } from 'src/auth/utils/decorator/customAuth.decorator';
 import { UserDocument } from 'src/users/user.schema';
 import { ArticleDocument } from './article.schema';
 import { ArticleService } from './articles.service';
+import { CommentByIdPipe } from './comments/comment.pipe';
+import { CommentDocument } from './comments/comment.schema';
 import { CommentService } from './comments/comments.service';
 import { CreateCommentaryDto } from './comments/dto/request/create-commentary.dto';
 import { GetCommentaryDto } from './comments/dto/response/get-commentary.dto';
 import { CreateArticleDto } from './dto/request/create-article.dto';
 import { UpdateArticleDto } from './dto/request/update-article.dto';
-import { GetArticleDto, GetArticleLightDto } from './dto/response/get-article.dto';
+import { GetArticleLightDto } from './dto/response/get-article-light.dto';
+import { GetArticleDto } from './dto/response/get-article.dto';
 import { ArticleByIdPipe } from './utils/article.pipe';
-import { Categories } from './utils/category/category.enum';
-import { ValidateCategoryPipe } from './utils/category/category.pipe';
-import { fileFilter } from './utils/file.filter';
-import { ValidateSearchPipe } from './utils/search.pipe';
 
 @ApiTags('Articles')
 @Controller('articles')
 export class ArticleController {
   constructor(private articleService: ArticleService, private readonly commentService: CommentService) {}
 
+  //TODO add pagination
+  @Protect()
   @Get()
-  @ApiCreatedResponse({ type: [GetArticleLightDto] })
-  findAll(
-    @Query('search', ValidateSearchPipe) search: string,
-    @Query('category', ValidateCategoryPipe) category: Categories,
-  ) {
-    return this.articleService.getArticles(category, search);
+  @ApiOperation({ summary: 'Get All Articles Paginated' })
+  @ApiOkResponse({ description: 'SUCCESS', type: [GetArticleLightDto] })
+  findAllPaginated() {
+    return this.articleService.getArticles();
   }
 
+  @Protect()
   @Post()
-  @ApiCreatedResponse({ type: GetArticleDto })
-  @Auth()
-  @UseInterceptors(FileInterceptor('file'))
-  create(
-    @Body() createArticleDto: CreateArticleDto,
-    @ConnectedUser() user: UserDocument,
-    @UploadedFile(UploadCloudinaryPipe) fileUrl?: string,
-  ) {
-    return this.articleService.createArticle({ ...createArticleDto, photoUrl: fileUrl }, user);
+  @FormDataRequest()
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Add Article' })
+  @ApiOkResponse({ description: 'SUCCESS', type: GetArticleDto })
+  create(@ConnectedUser() user: UserDocument, @Body() createArticleDto: CreateArticleDto) {
+    return this.articleService.createArticle(createArticleDto, user);
   }
 
   @Get(':articleId')
-  @ApiCreatedResponse({ type: GetArticleDto })
   @ApiParam({ name: 'articleId', type: String })
+  @ApiOperation({ summary: 'Get Article by ID' })
+  @ApiOkResponse({ description: 'SUCCESS', type: GetArticleDto })
   getOne(@Param('articleId', ArticleByIdPipe) article: ArticleDocument) {
     return this.articleService.getArticleWithComments(article);
   }
 
-  @Put(':articleId')
-  @ApiCreatedResponse({ type: GetArticleDto })
-  @AuthOwner()
+  @ProtectOwner()
+  @Patch(':articleId')
+  @FormDataRequest()
+  @ApiConsumes('multipart/form-data')
   @ApiParam({ name: 'articleId', type: String })
-  @UseInterceptors(
-    FileInterceptor('file', {
-      fileFilter: fileFilter,
-    }),
-  )
+  @ApiOperation({ summary: 'Update Article by ID' })
+  @ApiOkResponse({ description: 'SUCCESS', type: GetArticleDto })
   update(
     @Param('articleId', ArticleByIdPipe) articleToUpdate: ArticleDocument,
     @Body() updateArticleDto: UpdateArticleDto,
-    @UploadedFile(UploadCloudinaryPipe) fileUrl?: string,
   ) {
-    return this.articleService.updateArticle(articleToUpdate, { ...updateArticleDto, photoUrl: fileUrl });
+    return this.articleService.updateArticle(articleToUpdate, updateArticleDto);
   }
 
+  @ProtectOwner()
   @Delete(':articleId')
-  @AuthOwner()
+  @ApiOperation({ summary: 'Delete Article by ID' })
+  @ApiNoContentResponse({ description: 'SUCCESS' })
   delete(@Param('articleId') articleId: string) {
     this.articleService.deleteArticle(articleId);
     return {
@@ -79,14 +75,26 @@ export class ArticleController {
     };
   }
 
+  @Protect()
+  @Post(':articleId/like')
+  @ApiOperation({ summary: 'Add like to post' })
+  @ApiParam({ name: 'articleId', type: String })
+  @ApiOkResponse({ description: 'SUCCESS', type: GetArticleLightDto })
+  addLikeToArticle(@Param('articleId', ArticleByIdPipe) article: ArticleDocument, @ConnectedUser() user: UserDocument) {
+    return this.articleService.addLikeToArticle(article, user);
+  }
+
+  @Protect()
   @Post(':articleId/comment')
-  @ApiCreatedResponse({ type: GetCommentaryDto })
-  @Auth()
-  async addComment(
+  @ApiParam({ name: 'articleId', type: String })
+  @ApiOperation({ summary: 'Add comment to post' })
+  @ApiOkResponse({ type: GetCommentaryDto })
+  addComment(
     @Param('articleId', ArticleByIdPipe) article: ArticleDocument,
     @Body() createCommentaryDto: CreateCommentaryDto,
     @ConnectedUser() user: UserDocument,
+    @Body('commentParentId', CommentByIdPipe) parentComment?: CommentDocument,
   ) {
-    return this.commentService.addComment(user, createCommentaryDto, article);
+    return this.commentService.addComment(user, createCommentaryDto, article, parentComment);
   }
 }

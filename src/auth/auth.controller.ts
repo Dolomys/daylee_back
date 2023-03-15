@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto } from 'src/users/dto/request/create-user.dto';
-import { LoginUserDto } from 'src/users/dto/request/login-user.dto';
-import { GetUserDto } from 'src/users/dto/response/get-user-auth.dto';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CreateUserDto } from 'src/users/utils/dto/request/create-user.dto';
+import { LoginUserDto } from 'src/users/utils/dto/request/login-user.dto';
+import { GetUserDtoLight } from 'src/users/utils/dto/response/get-user-light.dto';
 import { AuthService } from './auth.service';
 
 @ApiTags('Authentification')
@@ -10,19 +10,21 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('/login')
-  @ApiCreatedResponse({
-    description: 'login success',
-    type: GetUserDto,
+  @Post('login')
+  @ApiOperation({ summary: 'Login' })
+  @ApiOkResponse({
+    description: 'SUCCESS',
+    type: GetUserDtoLight,
   })
   login(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
   }
 
-  @Post('/register')
-  @ApiCreatedResponse({
-    description: 'register success',
-    type: GetUserDto,
+  @Post('register')
+  @ApiOperation({ summary: 'Register' })
+  @ApiOkResponse({
+    description: 'SUCCESS',
+    type: GetUserDtoLight,
   })
   register(@Body() createUserDto: CreateUserDto) {
     return this.authService.register(createUserDto);

@@ -19,6 +19,18 @@ export class User {
 
   @Prop({ required: true })
   password: string;
+
+  @Prop()
+  avatarUrl?: string;
+
+  @Prop({ default: 0 })
+  followersCount: number;
+
+  @Prop({ default: 10 })
+  followingSlots: number;
+
+  @Prop()
+  followingsCount: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

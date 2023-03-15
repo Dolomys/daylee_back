@@ -1,25 +1,14 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { Categories } from 'src/articles/utils/category/category.enum';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
+import { HasMimeType, IsFile, MemoryStoredFile } from 'nestjs-form-data';
 
 export class CreateArticleDto {
   @ApiProperty()
-  @IsNotEmpty()
   @IsString()
-  title: string;
+  description: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  content: string;
-
-  @ApiProperty({ enum: ['Sport', 'Manga', 'Lifestyle', 'Various'] })
-  @IsEnum(Categories)
-  @IsNotEmpty()
-  category: Categories = Categories.Various;
-
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  photoUrl?: string;
+  @ApiPropertyOptional({ type: 'file' })
+  @IsFile()
+  @HasMimeType(['image/jpeg', 'image/png'])
+  image: MemoryStoredFile;
 }

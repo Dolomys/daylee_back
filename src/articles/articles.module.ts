@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { NestjsFormDataModule } from 'nestjs-form-data/dist/nestjs-form-data.module';
 import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 import { UsersModule } from 'src/users/users.module';
 import { ArticleMapper } from './article.mapper';
@@ -12,6 +13,7 @@ import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
+    NestjsFormDataModule,
     CloudinaryModule,
     forwardRef(() => CommentsModule),
     forwardRef(() => UsersModule),

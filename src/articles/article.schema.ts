@@ -1,24 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 import { UserDocument } from 'src/users/user.schema';
 import { GetCommentaryDto } from './comments/dto/response/get-commentary.dto';
-import { Categories } from './utils/category/category.enum';
 
 export type ArticleDocument = HydratedDocument<Article>;
 
 @Schema()
 export class Article {
   @Prop({ required: true })
-  title: string;
-
-  @Prop({ required: true })
-  content: string;
+  description: string;
 
   @Prop()
-  photoUrl?: string;
+  photoUrl: string;
 
   @Prop()
-  category: Categories;
+  likes?: Types.ObjectId[];
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   owner: UserDocument;
