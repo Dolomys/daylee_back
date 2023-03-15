@@ -8,7 +8,7 @@ import { Follow, FollowSchema } from './follow.schema';
 import { FollowService } from './follow.service';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Follow.name, schema: FollowSchema }]), forwardRef(()=> UsersModule)],
+  imports: [MongooseModule.forFeature([{ name: Follow.name, schema: FollowSchema }]), forwardRef(() => UsersModule)],
   providers: [FollowService, FollowRepository],
   exports: [FollowService, FollowRepository],
   controllers: [FollowController],

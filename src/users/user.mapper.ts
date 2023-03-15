@@ -11,7 +11,7 @@ export class UserMapper {
     id: user.id,
     username: user.username,
     email: user.email,
-    avatarUrl: user.avatarUrl
+    avatarUrl: user.avatarUrl,
   });
 
   toGetUserDto = (user: UserDocument): GetUserDto => ({
@@ -22,5 +22,5 @@ export class UserMapper {
     followersCount: user.followersCount,
     followingSlots: user.followingSlots,
     followingsCount: user.followingsCount,
-  })
+  });
 }

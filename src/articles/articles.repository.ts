@@ -22,22 +22,6 @@ export class ArticleRepository {
 
   create = (article: Article) => this.articleModel.create(article);
 
-  findWithQuery(articleFilterQuery: FilterQuery<Article>): Promise<ArticleDocument[]> {
-    const mongoQuery = [
-      {
-        $lookup: {
-          from: 'users',
-          as: 'owner',
-          localField: 'owner',
-          foreignField: '_id',
-        },
-      },
-      { $match: articleFilterQuery },
-      { $unwind: '$owner' },
-    ];
-    return this.articleModel.aggregate(mongoQuery).exec().then(this.orThrowArray);
-  }
-
   findAll = () => this.articleModel.find().populate('owner').exec().then(this.orThrowArray);
 
   findOneById = (articleId: string) =>

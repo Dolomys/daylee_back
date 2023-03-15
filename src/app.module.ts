@@ -29,7 +29,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     CloudinaryModule,
     FollowModule,
-    ChatModule
+    ChatModule,
   ],
 })
 export class AppModule {}

@@ -11,7 +11,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
-  @ApiOperation({ summary: 'Login'})
+  @ApiOperation({ summary: 'Login' })
   @ApiOkResponse({
     description: 'SUCCESS',
     type: GetUserDtoLight,
@@ -21,7 +21,7 @@ export class AuthController {
   }
 
   @Post('register')
-  @ApiOperation({ summary: 'Register'})
+  @ApiOperation({ summary: 'Register' })
   @ApiOkResponse({
     description: 'SUCCESS',
     type: GetUserDtoLight,

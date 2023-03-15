@@ -32,15 +32,15 @@ export class ArticleService {
     return this.articleRepository.findOneById(articleId);
   }
 
-  getArticlesNoFilter = () =>
+  getArticles = () =>
     this.articleRepository
       .findAll()
       .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
 
   async createArticle(createArticleDto: CreateArticleDto, user: UserDocument) {
-    const responseUpload = await this.cloudinaryService.uploadImage(createArticleDto.image)
-    const photoUrl = responseUpload.url
-    console.log(photoUrl)
+    const responseUpload = await this.cloudinaryService.uploadImage(createArticleDto.image);
+    const photoUrl = responseUpload.url;
+    console.log(photoUrl);
     const newArticle: Article = {
       ...createArticleDto,
       photoUrl: photoUrl,
@@ -58,11 +58,14 @@ export class ArticleService {
 
   deleteArticle = (articleId: string) => this.articleRepository.delete({ _id: articleId });
 
-  addLikeToArticle(article: ArticleDocument, user: UserDocument){
-    if(article.likes?.includes(user._id))
-      return this.articleRepository.removeLike(article, user).then(updatedArticle => this.articleMapper.toGetArticleLightDto(updatedArticle))
+  addLikeToArticle(article: ArticleDocument, user: UserDocument) {
+    if (article.likes?.includes(user._id))
+      return this.articleRepository
+        .removeLike(article, user)
+        .then((updatedArticle) => this.articleMapper.toGetArticleLightDto(updatedArticle));
     else
-      return this.articleRepository.addLike(article, user).then(updatedArticle => this.articleMapper.toGetArticleLightDto(updatedArticle))
+      return this.articleRepository
+        .addLike(article, user)
+        .then((updatedArticle) => this.articleMapper.toGetArticleLightDto(updatedArticle));
   }
-    
 }

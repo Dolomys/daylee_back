@@ -11,6 +11,6 @@ export class CommentMapper {
     id: comment.id,
     content: comment.content,
     owner: this.userMapper.toGetUserDto(comment.owner),
-    parentComment : comment.parentComment
+    parentComment: comment.parentComment,
   });
 }

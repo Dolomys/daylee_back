@@ -21,6 +21,6 @@ export class ArticleMapper {
     id: article._id,
     owner: this.userMapper.toGetUserLightDto(article.owner),
     commentCount: article.comments?.length,
-    likeCount: article.likes?.length
+    likeCount: article.likes?.length,
   });
 }

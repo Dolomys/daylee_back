@@ -24,7 +24,7 @@ export class User {
   avatarUrl?: string;
 
   @Prop({ default: 0 })
-  followersCount: number
+  followersCount: number;
 
   @Prop({ default: 10 })
   followingSlots: number;

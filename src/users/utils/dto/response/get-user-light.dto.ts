@@ -11,5 +11,5 @@ export class GetUserDtoLight {
   email: string;
 
   @ApiProperty()
-  avatarUrl?: string
+  avatarUrl?: string;
 }

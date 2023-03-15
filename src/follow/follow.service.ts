@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserMapper } from "src/users/user.mapper";
-import { UserDocument } from "src/users/user.schema";
+import { UserMapper } from 'src/users/user.mapper';
+import { UserDocument } from 'src/users/user.schema';
 import { UsersRepository } from 'src/users/users.repository';
-import { FollowRepository } from "./follow.repository";
+import { FollowRepository } from './follow.repository';
 
 @Injectable()
 export class FollowService {
@@ -25,13 +25,15 @@ export class FollowService {
   async followUser(follower: UserDocument, following: UserDocument) {
     if (follower.followingsCount >= follower.followingSlots) throw new UnauthorizedException('FOLLOWING_LIMIT_REACHED');
     if (following.id === follower.id) throw new UnauthorizedException('CANNOT_FOLLOW_YOURSELF');
-    const isFollowing = await this.followRepository.isFollowing(follower, following.id)
-    if(isFollowing) throw new UnauthorizedException('ALREADY_FOLLOWING');
+    const isFollowing = await this.followRepository.isFollowing(follower, following.id);
+    if (isFollowing) throw new UnauthorizedException('ALREADY_FOLLOWING');
     await this.userRepository.addFollowCount(follower, following);
     return this.followRepository.followUserOrThrow(follower, following);
   }
 
-  removeFollower = (user: UserDocument, following: UserDocument) => this.followRepository.removeFollowerOrThrow(user, following);
+  removeFollower = (user: UserDocument, following: UserDocument) =>
+    this.followRepository.removeFollowerOrThrow(user, following);
 
-  removeFollowing = (user: UserDocument, follower: UserDocument) => this.followRepository.removeFollowingOrThrow(user, follower);
+  removeFollowing = (user: UserDocument, follower: UserDocument) =>
+    this.followRepository.removeFollowingOrThrow(user, follower);
 }

@@ -23,29 +23,27 @@ export class ArticleController {
   constructor(private articleService: ArticleService, private readonly commentService: CommentService) {}
 
   //TODO add pagination
+  @Protect()
   @Get()
-  @ApiOperation({ summary: 'Get All Articles Paginated'})
+  @ApiOperation({ summary: 'Get All Articles Paginated' })
   @ApiOkResponse({ description: 'SUCCESS', type: [GetArticleLightDto] })
   findAllPaginated() {
-    return this.articleService.getArticlesNoFilter();
+    return this.articleService.getArticles();
   }
 
   @Protect()
   @Post()
   @FormDataRequest()
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Add Article'})
+  @ApiOperation({ summary: 'Add Article' })
   @ApiOkResponse({ description: 'SUCCESS', type: GetArticleDto })
-  create(
-    @ConnectedUser() user: UserDocument,
-    @Body() createArticleDto: CreateArticleDto,
-  ) {
+  create(@ConnectedUser() user: UserDocument, @Body() createArticleDto: CreateArticleDto) {
     return this.articleService.createArticle(createArticleDto, user);
   }
 
   @Get(':articleId')
   @ApiParam({ name: 'articleId', type: String })
-  @ApiOperation({ summary: 'Get Article by ID'})
+  @ApiOperation({ summary: 'Get Article by ID' })
   @ApiOkResponse({ description: 'SUCCESS', type: GetArticleDto })
   getOne(@Param('articleId', ArticleByIdPipe) article: ArticleDocument) {
     return this.articleService.getArticleWithComments(article);
@@ -56,18 +54,18 @@ export class ArticleController {
   @FormDataRequest()
   @ApiConsumes('multipart/form-data')
   @ApiParam({ name: 'articleId', type: String })
-  @ApiOperation({ summary: 'Update Article by ID'})
+  @ApiOperation({ summary: 'Update Article by ID' })
   @ApiOkResponse({ description: 'SUCCESS', type: GetArticleDto })
   update(
     @Param('articleId', ArticleByIdPipe) articleToUpdate: ArticleDocument,
-    @Body() updateArticleDto: UpdateArticleDto
+    @Body() updateArticleDto: UpdateArticleDto,
   ) {
-    return this.articleService.updateArticle(articleToUpdate,updateArticleDto);
+    return this.articleService.updateArticle(articleToUpdate, updateArticleDto);
   }
 
   @ProtectOwner()
   @Delete(':articleId')
-  @ApiOperation({ summary: 'Delete Article by ID'})
+  @ApiOperation({ summary: 'Delete Article by ID' })
   @ApiNoContentResponse({ description: 'SUCCESS' })
   delete(@Param('articleId') articleId: string) {
     this.articleService.deleteArticle(articleId);
@@ -79,20 +77,17 @@ export class ArticleController {
 
   @Protect()
   @Post(':articleId/like')
-  @ApiOperation({ summary: 'Add like to post'})
+  @ApiOperation({ summary: 'Add like to post' })
   @ApiParam({ name: 'articleId', type: String })
-  @ApiOkResponse({ description: 'SUCCESS', type: GetArticleLightDto})
-  addLikeToArticle(
-    @Param('articleId', ArticleByIdPipe) article: ArticleDocument,
-    @ConnectedUser() user: UserDocument,
-  ){
-    return this.articleService.addLikeToArticle(article, user)
+  @ApiOkResponse({ description: 'SUCCESS', type: GetArticleLightDto })
+  addLikeToArticle(@Param('articleId', ArticleByIdPipe) article: ArticleDocument, @ConnectedUser() user: UserDocument) {
+    return this.articleService.addLikeToArticle(article, user);
   }
 
   @Protect()
   @Post(':articleId/comment')
   @ApiParam({ name: 'articleId', type: String })
-  @ApiOperation({ summary: 'Add comment to post'})
+  @ApiOperation({ summary: 'Add comment to post' })
   @ApiOkResponse({ type: GetCommentaryDto })
   addComment(
     @Param('articleId', ArticleByIdPipe) article: ArticleDocument,
@@ -100,6 +95,6 @@ export class ArticleController {
     @ConnectedUser() user: UserDocument,
     @Body('commentParentId', CommentByIdPipe) parentComment?: CommentDocument,
   ) {
-    return this.commentService.addComment(user, createCommentaryDto, article,parentComment);
+    return this.commentService.addComment(user, createCommentaryDto, article, parentComment);
   }
 }

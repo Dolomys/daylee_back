@@ -15,7 +15,8 @@ export class CommentService {
     user: UserDocument,
     createCommentaryDto: CreateCommentaryDto,
     article: ArticleDocument,
-    parentComment?: CommentDocument) {
+    parentComment?: CommentDocument,
+  ) {
     const newComment: Comment = {
       ...createCommentaryDto,
       parentComment: parentComment,
@@ -29,19 +30,16 @@ export class CommentService {
   getArticleComments(article: Article): Promise<GetCommentaryDto[]> {
     return this.commentRepository
       .findCommentsByArticle(article)
-      .then((commentList) => commentList.map((comment) => (
-        this.commentMapper.toGetCommentDto(comment)
-        )));
+      .then((commentList) => commentList.map((comment) => this.commentMapper.toGetCommentDto(comment)));
   }
 
-  getCommentResponses(comment: Comment): Promise<GetCommentaryDto[]>{
+  getCommentResponses(comment: Comment): Promise<GetCommentaryDto[]> {
     return this.commentRepository
       .findCommentsResponse(comment)
-      .then(commentList => commentList.map(comment => this.commentMapper.toGetCommentDto(comment)))
+      .then((commentList) => commentList.map((comment) => this.commentMapper.toGetCommentDto(comment)));
   }
 
-
   getCommentById(commentId: string): Promise<CommentDocument> {
-    return this.commentRepository.findCommentById(commentId)
+    return this.commentRepository.findCommentById(commentId);
   }
 }

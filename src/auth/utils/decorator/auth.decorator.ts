@@ -20,10 +20,10 @@ export function ProtectOwner() {
   );
 }
 
-  export function ProtectFollow() {
-    return applyDecorators(
-      UseGuards(JwtAuthGuard, FollowOwnerGuard),
-      ApiBearerAuth(),
-      ApiUnauthorizedResponse({ description: 'Unauthorized' }),
-    );
+export function ProtectFollow() {
+  return applyDecorators(
+    UseGuards(JwtAuthGuard, FollowOwnerGuard),
+    ApiBearerAuth(),
+    ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+  );
 }

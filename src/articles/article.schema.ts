@@ -14,7 +14,7 @@ export class Article {
   photoUrl: string;
 
   @Prop()
-  likes?: Types.ObjectId[]
+  likes?: Types.ObjectId[];
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   owner: UserDocument;

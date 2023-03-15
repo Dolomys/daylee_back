@@ -12,6 +12,6 @@ export class GetCommentaryDto {
   @ApiProperty()
   id: string;
 
-  @ApiProperty({type: GetCommentaryDto})
-  parentComment?: CommentDocument
+  @ApiProperty({ type: GetCommentaryDto })
+  parentComment?: CommentDocument;
 }

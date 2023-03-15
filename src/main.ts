@@ -9,7 +9,7 @@ import { SocketIoAdapter } from './chat/socket-io-adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService)
+  const configService = app.get(ConfigService);
   app
     .useGlobalPipes(
       new ValidationPipe({
@@ -19,7 +19,7 @@ async function bootstrap() {
       }),
     )
     .useGlobalFilters(new MongoExceptionFilter())
-    .useWebSocketAdapter(new SocketIoAdapter(app, configService))
+    .useWebSocketAdapter(new SocketIoAdapter(app, configService));
 
   const config = new DocumentBuilder()
     .setTitle('Daylee')
