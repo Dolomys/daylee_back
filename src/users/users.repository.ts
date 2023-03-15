@@ -11,6 +11,8 @@ export class UsersRepository {
     if (x == null) throw new NotFoundException('User not found');
     return x;
   }
+  
+  findManyById = (usersIds: Types.ObjectId[]) => this.userModel.find({$in: {_id: usersIds}}).exec().then(this.orThrow)
 
   findOneByUsername = (username: string) => this.userModel.findOne({ username: username }).exec();
 

@@ -14,8 +14,11 @@ export class SocketIoAdapter extends IoAdapter {
     super(app);
   }
   createIOServer(port: number, options?: ServerOptions) {
+    const cors = {
+      origin: ['*']
+    }
     const jwtService = this.app.get(JwtService)
-    const server: Server = super.createIOServer(port,options)
+    const server: Server = super.createIOServer(port,{...options, cors})
     server.of('chat').use(createTokenMiddelware(jwtService))
     return server
   }
