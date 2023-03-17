@@ -13,9 +13,9 @@ $ npm install
 
 Voici la liste des variables d'environnements et leur implémentation :
 
-1 - Créer un dossier 'env' qui va contenir deux fichier :
-    - .env qui contiendra les valeurs ci-dessous
-    - cloudinary.config.ts avec ce code : 
+1 - Créer un dossier 'env' qui va contenir deux fichier :<br />
+    - .env qui contiendra les valeurs ci-dessous<br />
+    - cloudinary.config.ts avec ce code : <br />
 
     ```
       export default registerAs('cloudinary', () => ({
