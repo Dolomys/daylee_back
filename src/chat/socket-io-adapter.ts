@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { ServerOptions } from 'https';
 import { Server } from 'Socket.io';
-import { SocketWithAuth } from 'utils/types';
+import { SocketWithAuth } from 'src/utils/types';
 
 export class SocketIoAdapter extends IoAdapter {
   constructor(

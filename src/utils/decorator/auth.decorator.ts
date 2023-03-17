@@ -2,7 +2,7 @@ import { applyDecorators, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { ArticleOwnerGuard } from 'src/articles/utils/isOwner.guard';
 import { FollowOwnerGuard } from 'src/follow/utils/isFollowing.guard';
-import { JwtAuthGuard } from '../jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/utils/jwt-auth.guard';
 
 export function Protect() {
   return applyDecorators(

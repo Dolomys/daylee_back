@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UserDocument } from 'src/users/user.schema';
 import { UsersRepository } from 'src/users/users.repository';
-import { SocketWithAuth } from 'utils/types';
+import { SocketWithAuth } from 'src/utils/types';
 import { ChatRepository } from './chat.repository';
 import { CreateRoomDto } from './utils/dto/request/create-room.dto';
 import { JoinRoomDto } from './utils/dto/request/join-room-dto';
@@ -22,10 +23,10 @@ export class ChatService {
       IsPrivate: createRoomDto.isPrivate,
       participants: participants,
     });
-    client.to(client.id).emit(`${client.username} created room ${newRoom._id.toString()}`);
+    client.emit('message',`${client.username} created room ${newRoom._id.toString()}`);
   }
 
 //   async createMessage(client: SocketWithAuth, newMessageDto: NewMessageDto) => 
 
-  getUsersRooms = (client: SocketWithAuth) => this.chatRepository.getRoomsByUser(client.id)
+  getUsersRooms = (user: UserDocument) => this.chatRepository.getRoomsByUser(user.id)
 }

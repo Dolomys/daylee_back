@@ -7,7 +7,7 @@ import { UsersRepository } from 'src/users/users.repository';
 import { CreateUserDto } from 'src/users/utils/dto/request/create-user.dto';
 import { LoginUserDto } from 'src/users/utils/dto/request/login-user.dto';
 import { GetUserDtoLight } from 'src/users/utils/dto/response/get-user-light.dto';
-import { PayloadType } from '../../utils/types';
+import { PayloadType } from 'src/utils/types';
 import { UsersService } from '../users/users.service';
 
 @Injectable()

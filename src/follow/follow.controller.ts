@@ -2,11 +2,11 @@ import { Controller } from '@nestjs/common/decorators/core/controller.decorator'
 import { Delete, Get, Post } from '@nestjs/common/decorators/http/request-mapping.decorator';
 import { Param } from '@nestjs/common/decorators/http/route-params.decorator';
 import { ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { Protect, ProtectFollow } from 'src/auth/utils/decorator/auth.decorator';
-import { ConnectedUser } from 'src/auth/utils/decorator/customAuth.decorator';
 import { UserDocument } from 'src/users/user.schema';
 import { GetUserDtoLight } from 'src/users/utils/dto/response/get-user-light.dto';
 import { UserByIdPipe } from 'src/users/utils/user.pipe';
+import { Protect, ProtectFollow } from 'src/utils/decorator/auth.decorator';
+import { ConnectedUser } from 'src/utils/decorator/customAuth.decorator';
 import { FollowService } from './follow.service';
 
 @ApiTags('Follow')

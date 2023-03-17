@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiConsumes, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { FormDataRequest } from 'nestjs-form-data/dist/decorators';
-import { Protect, ProtectOwner } from 'src/auth/utils/decorator/auth.decorator';
-import { ConnectedUser } from 'src/auth/utils/decorator/customAuth.decorator';
 import { UserDocument } from 'src/users/user.schema';
+import { Protect, ProtectOwner } from 'src/utils/decorator/auth.decorator';
+import { ConnectedUser } from 'src/utils/decorator/customAuth.decorator';
 import { ArticleDocument } from './article.schema';
 import { ArticleService } from './articles.service';
 import { CommentByIdPipe } from './comments/comment.pipe';

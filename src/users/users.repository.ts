@@ -12,7 +12,7 @@ export class UsersRepository {
     return x;
   }
   
-  findManyById = (usersIds: Types.ObjectId[]) => this.userModel.find({$in: {_id: usersIds}}).exec().then(this.orThrow)
+  findManyById = (usersIds: Types.ObjectId[]) => this.userModel.find({ _id: { $in: usersIds } }).exec().then(this.orThrow)
 
   findOneByUsername = (username: string) => this.userModel.findOne({ username: username }).exec();
 
