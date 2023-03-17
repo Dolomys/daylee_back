@@ -16,7 +16,8 @@ Voici la liste des variables d'environnements et leur implémentation :
 1 - Créer un dossier 'env' qui va contenir deux fichier :
     - .env qui contiendra les valeurs ci-dessous
     - cloudinary.config.ts avec ce code : 
-    ```JavaScript
+    
+    ```
       export default registerAs('cloudinary', () => ({
         cloudName: process.env.CLOUD_NAME,
         apiKey: process.env.API_KEY,
