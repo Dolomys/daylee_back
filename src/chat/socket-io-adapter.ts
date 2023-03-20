@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { ServerOptions } from 'https';
-import { Server } from 'Socket.io';
+import { Server } from 'socket.io';
 import { SocketWithAuth } from 'src/utils/types';
 
 export class SocketIoAdapter extends IoAdapter {

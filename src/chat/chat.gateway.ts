@@ -1,7 +1,7 @@
 import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { NestGateway } from '@nestjs/websockets/interfaces/nest-gateway.interface';
-import { Namespace } from 'Socket.io';
+import { Namespace } from 'socket.io';
 import { SocketWithAuth } from 'src/utils/types';
 import { ChatRepository } from './chat.repository';
 import { ChatService } from './chat.service';

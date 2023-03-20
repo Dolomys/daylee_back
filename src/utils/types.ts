@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { Socket } from 'Socket.io';
+import { Socket } from 'socket.io';
 
 export type PayloadType = {
   id: Types.ObjectId;

@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common/exceptions';
-import { Namespace } from 'Socket.io';
+import { Namespace } from 'socket.io';
 import { UserDocument } from 'src/users/user.schema';
 import { UsersRepository } from 'src/users/users.repository';
 import { SocketWithAuth } from 'src/utils/types';
