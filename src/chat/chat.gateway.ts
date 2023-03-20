@@ -4,10 +4,10 @@ import { NestGateway } from '@nestjs/websockets/interfaces/nest-gateway.interfac
 import { Namespace } from 'Socket.io';
 import { SocketWithAuth } from 'src/utils/types';
 import { ChatRepository } from './chat.repository';
-import { Chat } from './chat.schema';
 import { ChatService } from './chat.service';
 import { CreateRoomDto } from './utils/dto/request/create-room.dto';
 import { JoinRoomDto } from './utils/dto/request/join-room-dto';
+import { NewMessageDto } from './utils/dto/request/new-message.dto';
 import { WsCatchAllFilter } from './utils/exceptions/ws-catch-all-filters';
 
 @UsePipes(new ValidationPipe())
@@ -26,25 +26,22 @@ export class ChatGateway implements NestGateway {
     console.log(sockets.size);
   }
 
-  handleDisconnect(client: SocketWithAuth) {
-    const currentRoom = Object.keys(client.rooms)[0];
-    client.leave(currentRoom);
-  }
+  handleDisconnect(client: SocketWithAuth) {}
 
   @SubscribeMessage('create')
   async handleCreateRoom(@ConnectedSocket() client: SocketWithAuth, @MessageBody() createRoomDto: CreateRoomDto) {
-      this.chatService.createRoom(client, createRoomDto);
+    this.chatService.createRoom(client, createRoomDto);
   }
 
   @SubscribeMessage('join')
   handleJoinRoom(@ConnectedSocket() client: SocketWithAuth, @MessageBody() joinRoomDto: JoinRoomDto) {
-    this.chatService.joinRoom(client, joinRoomDto);
+    this.chatService.joinRoom(client, joinRoomDto, this.io);
   }
 
   @SubscribeMessage('chat')
-  async handleNewMessage(client: SocketWithAuth, chat: Chat) {
-    await this.chatRepository.saveChat(chat);
-    console.log(Object.keys(client.rooms)[0]);
-    client.to(chat.roomId).emit('mesage', chat);
+  async handleNewMessage(client: SocketWithAuth, newMessageDto: NewMessageDto) {
+    await this.chatService.createMessage(client, newMessageDto);
+    const rooms = Array.from(client.rooms);
+    client.broadcast.to(rooms[1]).emit('mesage', newMessageDto.message);
   }
 }

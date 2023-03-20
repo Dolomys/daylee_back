@@ -1,7 +1,6 @@
 import { IsString } from 'class-validator';
-import { CreateRoomDto } from './create-room.dto';
 
-export class JoinRoomDto extends CreateRoomDto {
+export class JoinRoomDto {
   @IsString()
   roomId: string;
 }

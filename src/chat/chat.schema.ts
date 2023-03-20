@@ -5,7 +5,9 @@ import { UserDocument } from 'src/users/user.schema';
 export type ChatDocument = HydratedDocument<Chat>;
 export type ChatRoomDocument = HydratedDocument<ChatRoom>;
 
-@Schema()
+@Schema({
+  timestamps: true,
+})
 export class Chat {
   @Prop()
   roomId: string;
@@ -17,7 +19,9 @@ export class Chat {
   sender: UserDocument;
 }
 
-@Schema()
+@Schema({
+  timestamps: true,
+})
 export class ChatRoom {
   @Prop({ type: Boolean })
   IsPrivate: boolean;
