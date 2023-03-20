@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import cloudinaryConfig from 'env/cloudinary.config';
 import { ArticleModule } from './articles/articles.module';
 import { CommentsModule } from './articles/comments/comments.module';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
+import cloudinaryConfig from './cloudinary.config';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { FollowModule } from './follow/follow.module';
 import { UsersModule } from './users/users.module';
