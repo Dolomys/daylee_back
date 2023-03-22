@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 import { UserDocument } from 'src/users/user.schema';
 
 export type ChatDocument = HydratedDocument<Chat>;
@@ -9,8 +9,8 @@ export type ChatRoomDocument = HydratedDocument<ChatRoom>;
   timestamps: true,
 })
 export class Chat {
-  @Prop()
-  roomId: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'ChatRoom', required: true })
+  roomId: Types.ObjectId;
 
   @Prop()
   message: string;
@@ -26,6 +26,7 @@ export class ChatRoom {
   @Prop({ type: Boolean })
   IsPrivate: boolean;
 
+  //TODO Rajouter limite 10 ? 
   @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'User', required: true })
   participants: UserDocument[];
 }

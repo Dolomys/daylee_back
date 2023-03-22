@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiConsumes, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { FormDataRequest } from 'nestjs-form-data/dist/decorators';
 import { UserDocument } from 'src/users/user.schema';
@@ -12,7 +12,6 @@ import { CommentService } from './comments/comments.service';
 import { CreateCommentaryDto } from './comments/dto/request/create-commentary.dto';
 import { GetCommentaryDto } from './comments/dto/response/get-commentary.dto';
 import { CreateArticleDto } from './dto/request/create-article.dto';
-import { UpdateArticleDto } from './dto/request/update-article.dto';
 import { GetArticleLightDto } from './dto/response/get-article-light.dto';
 import { GetArticleDto } from './dto/response/get-article.dto';
 import { ArticleByIdPipe } from './utils/article.pipe';
@@ -49,19 +48,19 @@ export class ArticleController {
     return this.articleService.getArticleWithComments(article);
   }
 
-  @ProtectOwner()
-  @Patch(':articleId')
-  @FormDataRequest()
-  @ApiConsumes('multipart/form-data')
-  @ApiParam({ name: 'articleId', type: String })
-  @ApiOperation({ summary: 'Update Article by ID' })
-  @ApiOkResponse({ description: 'SUCCESS', type: GetArticleDto })
-  update(
-    @Param('articleId', ArticleByIdPipe) articleToUpdate: ArticleDocument,
-    @Body() updateArticleDto: UpdateArticleDto,
-  ) {
-    return this.articleService.updateArticle(articleToUpdate, updateArticleDto);
-  }
+  // @ProtectOwner()
+  // @Patch(':articleId')
+  // @FormDataRequest()
+  // @ApiConsumes('multipart/form-data')
+  // @ApiParam({ name: 'articleId', type: String })
+  // @ApiOperation({ summary: 'Update Article by ID' })
+  // @ApiOkResponse({ description: 'SUCCESS', type: GetArticleDto })
+  // update(
+  //   @Param('articleId', ArticleByIdPipe) articleToUpdate: ArticleDocument,
+  //   @Body() updateArticleDto: UpdateArticleDto,
+  // ) {
+  //   return this.articleService.updateArticle(articleToUpdate, updateArticleDto);
+  // }
 
   @ProtectOwner()
   @Delete(':articleId')
@@ -77,7 +76,7 @@ export class ArticleController {
 
   @Protect()
   @Post(':articleId/like')
-  @ApiOperation({ summary: 'Add like to post' })
+  @ApiOperation({ summary: 'Toggle Like on post' })
   @ApiParam({ name: 'articleId', type: String })
   @ApiOkResponse({ description: 'SUCCESS', type: GetArticleLightDto })
   addLikeToArticle(@Param('articleId', ArticleByIdPipe) article: ArticleDocument, @ConnectedUser() user: UserDocument) {

@@ -6,14 +6,11 @@ import { User, UserDocument } from 'src/users/user.schema';
 import { UsersRepository } from 'src/users/users.repository';
 import { CreateUserDto } from 'src/users/utils/dto/request/create-user.dto';
 import { LoginUserDto } from 'src/users/utils/dto/request/login-user.dto';
-import { GetUserDtoLight } from 'src/users/utils/dto/response/get-user-light.dto';
 import { PayloadType } from 'src/utils/types';
-import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
     private userMapper: UserMapper,
     private jwtService: JwtService,
     private readonly userRepository: UsersRepository,
@@ -29,18 +26,26 @@ export class AuthService {
     return user;
   }
 
+  private getToken(user: UserDocument) {
+    const payload:PayloadType = { username: user.username, id: user.id }
+    return this.jwtService.sign(payload)
+  }
+
   async login(loginUserDto: LoginUserDto) {
     const user = await this.validateUser(loginUserDto);
-    const payload: PayloadType = { username: user.username, id: user.id };
     return {
-      token: this.jwtService.sign(payload),
+      token: this.getToken(user),
       user: this.userMapper.toGetUserDto(user),
     };
   }
 
-  async register(createUserDto: CreateUserDto): Promise<GetUserDtoLight> {
+  async register(createUserDto: CreateUserDto) {
     const salt = await bcrypt.genSalt(10);
     createUserDto.password = await bcrypt.hash(createUserDto.password, salt);
-    return this.usersService.createUser(createUserDto as User);
+    const newUser = await this.userRepository.createOne(createUserDto as User)
+    return {
+      token: this.getToken(newUser),
+      user: this.userMapper.toGetUserDto(newUser),
+    }
   }
 }

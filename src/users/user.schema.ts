@@ -20,7 +20,7 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Prop()
+  @Prop({default: "https://res.cloudinary.com/dhl6bbmhb/image/upload/v1679325243/images_am6ss1.jpg"})
   avatarUrl?: string;
 
   @Prop({ default: 0 })

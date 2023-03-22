@@ -5,11 +5,13 @@ import { DocumentBuilder } from '@nestjs/swagger';
 import { SwaggerModule } from '@nestjs/swagger/dist';
 import { AppModule } from './app.module';
 import { SocketIoAdapter } from './chat/socket-io-adapter';
+import { EnvironmentVariables } from './utils/config/configuration';
 import { MongoExceptionFilter } from './utils/mongoExceptions';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService);
+  const configService = app.get(ConfigService<EnvironmentVariables, true>);
+
   app
     .useGlobalPipes(
       new ValidationPipe({
@@ -19,7 +21,7 @@ async function bootstrap() {
       }),
     )
     .useGlobalFilters(new MongoExceptionFilter())
-    .useWebSocketAdapter(new SocketIoAdapter(app, configService));
+    .useWebSocketAdapter(new SocketIoAdapter(app));
 
   const config = new DocumentBuilder()
     .setTitle('Daylee')
@@ -31,6 +33,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/doc', app, document);
 
-  await app.listen(3000);
+  await app.listen(configService.get('PORT'));
 }
 bootstrap();

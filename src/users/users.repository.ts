@@ -11,14 +11,21 @@ export class UsersRepository {
     if (x == null) throw new NotFoundException('User not found');
     return x;
   }
-  
-  findManyById = (usersIds: Types.ObjectId[]) => this.userModel.find({ _id: { $in: usersIds } }).exec().then(this.orThrow)
+
+  findManyById = (usersIds: Types.ObjectId[]) =>
+    this.userModel
+      .find({ _id: { $in: usersIds } })
+      .exec()
+      .then(this.orThrow);
 
   findOneByUsername = (username: string) => this.userModel.findOne({ username: username }).exec();
 
   findOneById = (userId: Types.ObjectId) => this.userModel.findOne({ _id: userId }).exec().then(this.orThrow);
 
   createOne = (user: User) => this.userModel.create(user);
+
+  updateUser = (userId: Types.ObjectId, newUser: Partial<User>) =>
+    this.userModel.findOneAndUpdate({ _id: userId }, newUser, {new: true}).exec().then(this.orThrow);
 
   async addFollowCount(follower: UserDocument, following: UserDocument) {
     await this.userModel

@@ -5,13 +5,19 @@ import { GetUserDtoLight } from "src/users/utils/dto/response/get-user-light.dto
 export class GetArticleLightDto {
     @ApiProperty()
     id: Types.ObjectId;
-    
-    @ApiProperty()
-    owner: GetUserDtoLight;
 
     @ApiProperty()
-    commentCount?: number;
+    content: string;
 
     @ApiProperty()
-    likeCount?: number;
+    photoUrl: string;
+
+    @ApiProperty()
+    commentCount: number;
+
+    @ApiProperty()
+    likeCount: number;
+
+    @ApiProperty()
+    owner?: GetUserDtoLight;
   }

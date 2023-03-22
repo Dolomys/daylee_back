@@ -23,7 +23,7 @@ export class ChatController {
   @ApiParam({ name: 'roomId', type: String })
   @ApiOperation({ summary: 'Get All Messages From Room' })
   @ApiOkResponse({ description: 'SUCCESS' })
-  getRoomMessages(@ConnectedUser() user: UserDocument, @Param('roomId') roomId: string) {
+  getRoomMessagesPaginated(@ConnectedUser() user: UserDocument, @Param('roomId') roomId: string) {
     return this.chatService.getRoomMessages(roomId, user);
   }
 }

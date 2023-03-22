@@ -32,7 +32,7 @@ export class ChatRepository {
   saveRoom = (roomChat: ChatRoom) => this.chatRoomModel.create(roomChat);
 
   getRoomMessages = (roomChatId: string) =>
-    this.chatModel.find({ roomId: roomChatId }).sort({ createdAt: -1 }).exec().then(this.orThrow);
+    this.chatModel.find({ room: roomChatId }).sort({ createdAt: -1 }).populate('sender').exec().then(this.orThrow);
 
   async isInRoom(roomChatId: string, userId: Types.ObjectId) {
     const inRoom = await this.chatRoomModel.find({ _id: roomChatId, $in: { participants: userId } }).exec();

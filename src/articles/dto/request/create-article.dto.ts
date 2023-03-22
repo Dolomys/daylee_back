@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 import { HasMimeType, IsFile, MemoryStoredFile } from 'nestjs-form-data';
 
@@ -7,7 +7,7 @@ export class CreateArticleDto {
   @IsString()
   description: string;
 
-  @ApiPropertyOptional({ type: 'file' })
+  @ApiProperty({ type: 'file' })
   @IsFile()
   @HasMimeType(['image/jpeg', 'image/png'])
   image: MemoryStoredFile;

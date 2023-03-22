@@ -29,7 +29,7 @@ export class ArticleService {
   getArticles = () =>
     this.articleRepository
       .findAll()
-      .then((articleList) => articleList.map((article) => this.articleMapper.toGetArticleLightDto(article)));
+      .then((articleList) => this.articleMapper.toGetArticleListLightDto(articleList));
 
   async createArticle(createArticleDto: CreateArticleDto, user: UserDocument) {
     const responseUpload = await this.cloudinaryService.uploadImage(createArticleDto.image);

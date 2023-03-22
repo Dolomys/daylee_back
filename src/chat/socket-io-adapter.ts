@@ -1,5 +1,4 @@
 import { INestApplicationContext } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { ServerOptions } from 'https';
@@ -9,8 +8,7 @@ import { SocketWithAuth } from 'src/utils/types';
 export class SocketIoAdapter extends IoAdapter {
   constructor(
     private app: INestApplicationContext,
-    private configService: ConfigService
-    ) {
+ ) {
     super(app);
   }
   createIOServer(port: number, options?: ServerOptions) {
@@ -25,6 +23,7 @@ export class SocketIoAdapter extends IoAdapter {
 }
 
 const createTokenMiddelware = (jwtService: JwtService) => (socket: SocketWithAuth, next) => {
+  //TODO remove hanhshake headers --> for postman test only
     const token = socket.handshake.auth.token || socket.handshake.headers['token']
     try{
         const payload = jwtService.verify(token)

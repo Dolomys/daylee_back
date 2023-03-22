@@ -26,6 +26,8 @@ export class CommentRepository {
     return this.commentModel.find({ article: article }).populate('owner').exec();
   }
 
+  countCommentsByArticle = (article: Article) => this.commentModel.find({ article: article}).count().exec()
+
   findCommentsResponse(comment: Comment): Promise<CommentDocument[]> {
     return this.commentModel.find({ parentComment: comment }).populate('owner').exec();
   }
