@@ -8,10 +8,11 @@ import { ChatModule } from './chat/chat.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { FollowModule } from './follow/follow.module';
 import { UsersModule } from './users/users.module';
+import { validateEnv } from './utils/config/configuration';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({isGlobal: true }),
+    ConfigModule.forRoot({ validate: validateEnv, isGlobal: true }),
     MongooseModule.forRootAsync({
       useFactory: async (config: ConfigService) => ({
         uri: config.get('MONGODB.URL'),
