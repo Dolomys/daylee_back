@@ -13,37 +13,32 @@ $ npm install
 
 Voici la liste des variables d'environnements et leur implémentation :
 
-1 - Créer un dossier 'env' qui va contenir deux fichier :<br />
-    - .env qui contiendra les valeurs ci-dessous<br />
-    - cloudinary.config.ts avec ce code : <br />
-
+1 - Créer un fichier 'config.yalm' à la racine du projet avec les valeurs ci-dessous : <br />
     ```
-      export default registerAs('cloudinary', () => ({
-        cloudName: process.env.CLOUD_NAME,
-        apiKey: process.env.API_KEY,
-        apiSecret: process.env.API_SECRET,
-        }));
+
+    MONGODB: 
+      URL: créer un compte MongoDB en ligne ou en local avec MongoDBCompass
+
+    JWT:
+      SECRET: clé secrete
+      EXPIRATION_TIME: de préference 1d ou + pour ne pas avoir à se reconnecter trop souvent lors des test3d 
+
+    CLOUDINARY: // Voir les infos ci-dessous
+      NAME:  
+      KEY: 
+      SECRET: 
     ```
 
 
 ### Jwt, ajouter une clé secrete et un temps d'expiration
-JWT_SECRET --> n'importe quel string fait l'affaire lors du test <br />
-JWT_EXPIRATION_TIME --> de préference 1d ou + pour ne pas avoir à se reconnecter trop souvent lors des test <br />
+JWT_SECRET  <br />
+JWT_EXPIRATION_TIME -->  <br />
 
 ### Cloudinary
-Il faudra d'abord se créer un compte sur le site https://cloudinary.com/
-Puis récuperer les variables ci-dessous :  <br />
-CLOUDINARY_NAME <br />
-CLOUDINARY_API_KEY <br />
-CLOUDINARY_API_SECRET <br />
+Env de Cloudinary, il faudra d'abord se créer un compte sur le site https://cloudinary.com/
 
 On peut les retrouver sur le dashboard :
 ![Cloundinary](https://cloudinary-res.cloudinary.com/image/upload/bo_1px_solid_gray/f_auto/q_auto/docs/prod_env_credentials.png)
-
-### MongoDB
-Et enfin la variable pour la BDD MongoDb: <br />
-MONGODB_URL = 'urlMongoDb' --> créer un compte MongoDB en ligne ou en local avec MongoDBCompass
-
 
 # Running the app
 
