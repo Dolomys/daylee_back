@@ -15,7 +15,7 @@ import { validateEnv } from './utils/config/configuration';
     ConfigModule.forRoot({ validate: validateEnv, isGlobal: true }),
     MongooseModule.forRootAsync({
       useFactory: async (config: ConfigService) => ({
-        uri: config.get('MONGODB.URL'),
+        uri: config.get('MONGODB_URL'),
       }),
       inject: [ConfigService],
     }),

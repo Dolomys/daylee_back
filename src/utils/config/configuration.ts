@@ -6,7 +6,6 @@ import { object } from 'dot-object';
 import { readFileSync } from 'fs';
 import * as yaml from 'js-yaml';
 import { fileExistsSync } from 'tsconfig-paths/lib/filesystem';
-import { ValidateN } from '../decorator/validate-nested.decorator';
 
 const YAML_CONFIG_FILENAME = 'config.yaml';
 
@@ -16,22 +15,11 @@ export class MongoDBEnvConfig {
 }
 
 export class CloudinaryEnvConfig {
-  @IsString()
-  NAME: string;
 
-  @IsString()
-  KEY: string;
-
-  @IsString()
-  SECRET: string;
 }
 
 export class JwtEnvConfig {
-  @IsString()
-  SECRET: string;
 
-  @IsString()
-  EXPIRATION_TIME: string;
 }
 
 
@@ -39,14 +27,23 @@ export class EnvironmentVariables {
   @IsNumber()
   PORT: number = 3000;
 
-  @ValidateN(MongoDBEnvConfig)
-  MONGODB: MongoDBEnvConfig;
+  @IsString()
+  MONGODB_URL: string;
 
-  @ValidateN(CloudinaryEnvConfig)
-  CLOUDINARY: CloudinaryEnvConfig;
+  @IsString()
+  CLOUDINARY_NAME: string;
 
-  @ValidateN(JwtEnvConfig)
-  JWT: JwtEnvConfig;
+  @IsString()
+  CLOUDINARY_KEY: string;
+
+  @IsString()
+  CLOUDINARY_SECRET: string;
+
+  @IsString()
+  JWT_SECRET: string;
+
+  @IsString()
+  JWT_EXPIRATION_TIME: string;
 }
 
 export function validateEnv(config: Record<string, unknown>) {
@@ -54,7 +51,8 @@ export function validateEnv(config: Record<string, unknown>) {
     fileExistsSync(YAML_CONFIG_FILENAME) &&
     (yaml.load(readFileSync(YAML_CONFIG_FILENAME, 'utf8')) as Record<string, unknown>);
 
-  const validatedConfig = plainToInstance(EnvironmentVariables, object({ ...config, ...yamlConfig }), {
+    console.log(yamlConfig)
+  const validatedConfig = plainToInstance(EnvironmentVariables, object({ ...config, ...yamlConfig,...process.env }), {
     enableImplicitConversion: true,
   });
   const errors = validateSync(validatedConfig, { skipMissingProperties: false, whitelist: true });

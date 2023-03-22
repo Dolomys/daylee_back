@@ -37,3 +37,4 @@ lerna-debug.log*
 # files or folder to ignore
 env/
 config.yaml
+.env
