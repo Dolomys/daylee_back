@@ -18,6 +18,8 @@ export class UsersRepository {
       .exec()
       .then(this.orThrow);
 
+  findOneByEmail = (email: string) => this.userModel.findOne({ email: email }).exec();
+
   findOneByUsername = (username: string) => this.userModel.findOne({ username: username }).exec();
 
   findOneById = (userId: Types.ObjectId) => this.userModel.findOne({ _id: userId }).exec().then(this.orThrow);
@@ -25,7 +27,7 @@ export class UsersRepository {
   createOne = (user: User) => this.userModel.create(user);
 
   updateUser = (userId: Types.ObjectId, newUser: Partial<User>) =>
-    this.userModel.findOneAndUpdate({ _id: userId }, newUser, {new: true}).exec().then(this.orThrow);
+    this.userModel.findOneAndUpdate({ _id: userId }, newUser, { new: true }).exec().then(this.orThrow);
 
   async addFollowCount(follower: UserDocument, following: UserDocument) {
     await this.userModel

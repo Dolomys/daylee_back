@@ -18,7 +18,7 @@ export class AuthService {
   ) {}
 
   async validateUser(loginUserDto: LoginUserDto): Promise<UserDocument> {
-    const user = await this.userRepository.findOneByUsername(loginUserDto.username);
+    const user = await this.userRepository.findOneByEmail(loginUserDto.email);
     if (!user) throw new NotFoundException('User or Password incorrect');
 
     const validated = bcrypt.compareSync(loginUserDto.password, user.password);
