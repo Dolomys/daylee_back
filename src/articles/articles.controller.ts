@@ -5,6 +5,7 @@ import { FormDataRequest } from 'nestjs-form-data/dist/decorators';
 import { UserDocument } from 'src/users/user.schema';
 import { Protect, ProtectOwner } from 'src/utils/decorator/auth.decorator';
 import { ConnectedUser } from 'src/utils/decorator/customAuth.decorator';
+import { ApiPaginatedDto } from 'src/utils/tools/dto/api-pagined-dto.decorator';
 import { PaginationOptionsDto } from 'src/utils/tools/dto/request/pagination-options.dto';
 import { ArticleDocument } from './article.schema';
 import { ArticleService } from './articles.service';
@@ -26,7 +27,7 @@ export class ArticleController {
   @Protect()
   @Get()
   @ApiOperation({ summary: 'Get All Articles Paginated' })
-  @ApiOkResponse({ description: 'SUCCESS', type: [GetArticleLightDto] })
+  @ApiPaginatedDto(GetArticleLightDto)
   findAllPaginated(@Query() paginationOptionsDto: PaginationOptionsDto) {
     return this.articleService.getArticles(paginationOptionsDto);
   }

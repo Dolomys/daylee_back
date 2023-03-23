@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Protect } from 'src/utils/decorator/auth.decorator';
+import { ApiPaginatedDto } from 'src/utils/tools/dto/api-pagined-dto.decorator';
 import { PaginationOptionsDto } from 'src/utils/tools/dto/request/pagination-options.dto';
 import { ArticleDocument } from '../article.schema';
 import { ArticleByIdPipe } from '../utils/article.pipe';
@@ -16,7 +17,7 @@ export class CommentsController {
   @Get(':articleId')
   @ApiOperation({ description: 'Get comments paginated from article ID' })
   @ApiParam({ name: 'articleId', type: String })
-  @ApiOkResponse({ description: 'SUCCESS', type: [GetCommentaryDto] })
+  @ApiPaginatedDto(GetCommentaryDto)
   getArticleCommentsPaginated(
     @Param('articleId', ArticleByIdPipe) article: ArticleDocument,
     @Query() paginationOptionDto: PaginationOptionsDto,

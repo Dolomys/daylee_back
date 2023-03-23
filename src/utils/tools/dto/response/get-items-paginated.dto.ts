@@ -4,7 +4,7 @@ import { Document, PaginateResult } from 'mongoose';
 
 export class PaginationMetaDto {
   @ApiProperty()
-  page?: number | null;
+  page: number;
 
   @ApiProperty()
   take: number;
@@ -22,7 +22,7 @@ export class PaginationMetaDto {
   hasNextPage: boolean;
 }
 
-export class PaginationDto<T, Y = undefined> {
+export class PaginationDto<T> {
   @ApiProperty({ isArray: true })
   @IsArray()
   data: T[];
@@ -32,7 +32,7 @@ export class PaginationDto<T, Y = undefined> {
 
   constructor(data: (T extends Promise<T> ? never : T)[], queryMeta: PaginateResult<Document>) {
     this.data = data;
-    this.meta.page = queryMeta.page;
+    this.meta.page = queryMeta.page ?? 0;
     this.meta.take = queryMeta.limit;
     this.meta.itemCount = queryMeta.totalDocs;
     this.meta.pageCount = queryMeta.pagingCounter;
