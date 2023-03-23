@@ -5,6 +5,8 @@ import { UserDocument } from 'src/users/user.schema';
 import { PaginationOptionsDto } from 'src/utils/tools/dto/request/pagination-options.dto';
 import { Article, ArticleDocument } from './article.schema';
 
+const PAGINATE_QUERY_LIMIT = 10;
+
 @Injectable()
 export class ArticleRepository {
   constructor(@InjectModel(Article.name) private articleModel: mongoose.PaginateModel<ArticleDocument>) {}
@@ -24,8 +26,12 @@ export class ArticleRepository {
   create = (article: any) => this.articleModel.create(article);
 
   async findAllWithPaginate(paginationOptionsDto: PaginationOptionsDto) {
-    const { page = 1, limit = 10 } = paginationOptionsDto;
-    return await this.articleModel.paginate({}, { page, limit, populate: 'owner' });
+    const options = {
+      page: paginationOptionsDto.page ?? 1,
+      limit: PAGINATE_QUERY_LIMIT,
+      populate: 'owner',
+    };
+    return await this.articleModel.paginate({}, options);
   }
 
   findAll = () => this.articleModel.find().populate('owner').exec().then(this.orThrowArray);

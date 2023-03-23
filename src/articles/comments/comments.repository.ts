@@ -6,6 +6,8 @@ import { PaginationOptionsDto } from 'src/utils/tools/dto/request/pagination-opt
 import { Article } from '../article.schema';
 import { Comment, CommentDocument } from './comment.schema';
 
+const PAGINATE_QUERY_LIMIT = 10;
+
 @Injectable()
 export class CommentRepository {
   constructor(@InjectModel(Comment.name) private commentModel: mongoose.PaginateModel<CommentDocument>) {}
@@ -22,8 +24,8 @@ export class CommentRepository {
 
   async findCommentsByArticle(article: Article, paginationOptionsDto: PaginationOptionsDto) {
     const options = {
-      page: (paginationOptionsDto.page = 1),
-      limit: (paginationOptionsDto.limit = 10),
+      page: paginationOptionsDto.page ?? 1,
+      limit: PAGINATE_QUERY_LIMIT,
       populate: 'owner',
     };
     return await this.commentModel.paginate({ article: article }, options);
