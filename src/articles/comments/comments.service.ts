@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserDocument } from 'src/users/user.schema';
+import { PaginationOptionsDto } from 'src/utils/tools/dto/request/pagination-options.dto';
+import { PaginationDto } from 'src/utils/tools/dto/response/get-items-paginated.dto';
 import { Article, ArticleDocument } from '../article.schema';
 import { CommentMapper } from './comment.mapper';
 import { Comment, CommentDocument } from './comment.schema';
@@ -17,7 +19,7 @@ export class CommentService {
     article: ArticleDocument,
     parentComment?: CommentDocument,
   ) {
-    const newComment: Comment = {
+    const newComment = {
       ...createCommentaryDto,
       parentComment: parentComment,
       owner: user,
@@ -27,10 +29,9 @@ export class CommentService {
     return this.commentMapper.toGetCommentDto(result);
   }
 
-  getArticleComments(article: Article): Promise<GetCommentaryDto[]> {
-    return this.commentRepository
-      .findCommentsByArticle(article)
-      .then((commentList) => commentList.map((comment) => this.commentMapper.toGetCommentDto(comment)));
+  async getArticleComments(article: Article, paginationOptionsDto: PaginationOptionsDto) {
+    const commentsPaginated = await this.commentRepository.findCommentsByArticle(article, paginationOptionsDto);
+    return new PaginationDto(await this.commentMapper.toGetCommentsListDto(commentsPaginated.docs), commentsPaginated);
   }
 
   getCommentResponses(comment: Comment): Promise<GetCommentaryDto[]> {

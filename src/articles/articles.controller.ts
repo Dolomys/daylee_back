@@ -1,9 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Query } from '@nestjs/common/decorators/http/route-params.decorator';
 import { ApiConsumes, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { FormDataRequest } from 'nestjs-form-data/dist/decorators';
 import { UserDocument } from 'src/users/user.schema';
 import { Protect, ProtectOwner } from 'src/utils/decorator/auth.decorator';
 import { ConnectedUser } from 'src/utils/decorator/customAuth.decorator';
+import { PaginationOptionsDto } from 'src/utils/tools/dto/request/pagination-options.dto';
 import { ArticleDocument } from './article.schema';
 import { ArticleService } from './articles.service';
 import { CommentByIdPipe } from './comments/comment.pipe';
@@ -21,13 +23,12 @@ import { ArticleByIdPipe } from './utils/article.pipe';
 export class ArticleController {
   constructor(private articleService: ArticleService, private readonly commentService: CommentService) {}
 
-  //TODO add pagination
   @Protect()
   @Get()
   @ApiOperation({ summary: 'Get All Articles Paginated' })
   @ApiOkResponse({ description: 'SUCCESS', type: [GetArticleLightDto] })
-  findAllPaginated() {
-    return this.articleService.getArticles();
+  findAllPaginated(@Query() paginationOptionsDto: PaginationOptionsDto) {
+    return this.articleService.getArticles(paginationOptionsDto);
   }
 
   @Protect()

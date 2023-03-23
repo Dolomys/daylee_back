@@ -1,6 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
-import { GetCommentaryDto } from 'src/articles/comments/dto/response/get-commentary.dto';
 import { GetUserDtoLight } from 'src/users/utils/dto/response/get-user-light.dto';
 
 export class GetArticleDto {
@@ -15,7 +14,4 @@ export class GetArticleDto {
 
   @ApiProperty()
   owner: GetUserDtoLight;
-
-  @ApiPropertyOptional()
-  comments?: GetCommentaryDto[] | null;
 }

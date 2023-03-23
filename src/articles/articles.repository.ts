@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import mongoose, { FilterQuery } from 'mongoose';
 import { UserDocument } from 'src/users/user.schema';
+import { PaginationOptionsDto } from 'src/utils/tools/dto/request/pagination-options.dto';
 import { Article, ArticleDocument } from './article.schema';
 
 @Injectable()
 export class ArticleRepository {
-  constructor(@InjectModel(Article.name) private articleModel: Model<ArticleDocument>) {}
+  constructor(@InjectModel(Article.name) private articleModel: mongoose.PaginateModel<ArticleDocument>) {}
 
   async orThrow<T>(x: T | null) {
     if (x == null) throw new NotFoundException('Article not found');
@@ -20,7 +21,12 @@ export class ArticleRepository {
     return x;
   }
 
-  create = (article: Article) => this.articleModel.create(article);
+  create = (article: any) => this.articleModel.create(article);
+
+  async findAllWithPaginate(paginationOptionsDto: PaginationOptionsDto) {
+    const { page = 1, limit = 10 } = paginationOptionsDto;
+    return await this.articleModel.paginate({}, { page, limit, populate: 'owner' });
+  }
 
   findAll = () => this.articleModel.find().populate('owner').exec().then(this.orThrowArray);
 

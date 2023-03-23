@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { Document, HydratedDocument } from 'mongoose';
+import * as paginate from 'mongoose-paginate-v2';
 import { UserDocument } from 'src/users/user.schema';
 import { ArticleDocument } from '../article.schema';
 
 export type CommentDocument = HydratedDocument<Comment>;
 
 @Schema()
-export class Comment {
+export class Comment extends Document {
   @Prop({ required: true })
   content: string;
 
@@ -28,3 +29,4 @@ export class Comment {
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);
+CommentSchema.plugin(paginate);

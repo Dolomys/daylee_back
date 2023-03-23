@@ -1,11 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument, Types } from 'mongoose';
+import mongoose, { Document, HydratedDocument, Types } from 'mongoose';
+import * as paginate from 'mongoose-paginate-v2';
 import { UserDocument } from 'src/users/user.schema';
 
 export type ArticleDocument = HydratedDocument<Article>;
 
 @Schema()
-export class Article {
+export class Article extends Document {
   @Prop({ required: true })
   description: string;
 
@@ -20,4 +21,6 @@ export class Article {
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);
+ArticleSchema.plugin(paginate);
+
 ArticleSchema.index;

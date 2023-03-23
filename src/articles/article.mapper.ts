@@ -20,7 +20,6 @@ export class ArticleMapper {
       content: article.description,
       photoUrl: article.photoUrl,
       owner: this.userMapper.toGetUserLightDto(article.owner),
-      comments: await this.commentService.getArticleComments(article),
     };
   }
 
@@ -31,9 +30,9 @@ export class ArticleMapper {
     const commentCount = await this.commentRepository.countCommentsByArticle(article);
     return {
       id: article.id,
+      description: article.description,
       commentCount: commentCount,
       likeCount: article.likes?.length ?? 0,
-      content: article.description,
       photoUrl: article.photoUrl,
       owner: article.owner && this.userMapper.toGetUserLightDto(article.owner),
     };

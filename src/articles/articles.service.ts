@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UserDocument } from 'src/users/user.schema';
+import { PaginationOptionsDto } from 'src/utils/tools/dto/request/pagination-options.dto';
+import { PaginationDto } from 'src/utils/tools/dto/response/get-items-paginated.dto';
 import { ArticleMapper } from './article.mapper';
-import { Article, ArticleDocument } from './article.schema';
+import { ArticleDocument } from './article.schema';
 import { ArticleRepository } from './articles.repository';
 import { CreateArticleDto } from './dto/request/create-article.dto';
 import { UpdateArticleDto } from './dto/request/update-article.dto';
@@ -26,16 +28,17 @@ export class ArticleService {
 
   getArticleById = (articleId: string): Promise<ArticleDocument> => this.articleRepository.findOneById(articleId);
 
-  getArticles = () =>
-    this.articleRepository
-      .findAll()
-      .then((articleList) => this.articleMapper.toGetArticleListLightDto(articleList));
+  async getArticles(paginationOptionsDto: PaginationOptionsDto) {
+    const articles = await this.articleRepository.findAllWithPaginate(paginationOptionsDto);
+
+    return new PaginationDto(await this.articleMapper.toGetArticleListLightDto(articles.docs), articles);
+  }
 
   async createArticle(createArticleDto: CreateArticleDto, user: UserDocument) {
     const responseUpload = await this.cloudinaryService.uploadImage(createArticleDto.image);
     const photoUrl = responseUpload.url;
     console.log(photoUrl);
-    const newArticle: Article = {
+    const newArticle = {
       ...createArticleDto,
       photoUrl: photoUrl,
       owner: user,

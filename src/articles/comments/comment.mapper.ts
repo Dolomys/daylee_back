@@ -7,6 +7,9 @@ import { GetCommentaryDto } from './dto/response/get-commentary.dto';
 export class CommentMapper {
   constructor(private readonly userMapper: UserMapper) {}
 
+  toGetCommentsListDto = (comments: CommentDocument[]): Promise<GetCommentaryDto[]> =>
+    Promise.all(comments.map((x) => this.toGetCommentDto(x)));
+
   toGetCommentDto = (comment: CommentDocument): GetCommentaryDto => ({
     id: comment.id,
     content: comment.content,
