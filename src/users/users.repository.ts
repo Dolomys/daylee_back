@@ -1,11 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { User, UserDocument } from './user.schema';
+import { FilterAndPaginateDto } from './utils/dto/request/filter-user.dto';
 
+const PAGINATE_QUERY_LIMIT = 10;
 @Injectable()
 export class UsersRepository {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(@InjectModel(User.name) private userModel: mongoose.PaginateModel<UserDocument>) {}
 
   async orThrow<T>(x: T | null) {
     if (x == null) throw new NotFoundException('User not found');
@@ -17,6 +19,15 @@ export class UsersRepository {
       .find({ _id: { $in: usersIds } })
       .exec()
       .then(this.orThrow);
+
+  async findManyWithFilter(filterAndPaginateDto: FilterAndPaginateDto) {
+    const options = {
+      page: filterAndPaginateDto.page ?? 1,
+      limit: PAGINATE_QUERY_LIMIT,
+    };
+    const filter = filterAndPaginateDto.query ? { username: { $regex: filterAndPaginateDto.query, $options: 'i' } } : {};
+    return await this.userModel.paginate(filter, options);
+  }
 
   findOneByEmail = (email: string) => this.userModel.findOne({ email: email }).exec();
 

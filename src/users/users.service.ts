@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { PaginationDto } from 'src/utils/tools/dto/response/get-items-paginated.dto';
 import { UserMapper } from './user.mapper';
 import { UserDocument } from './user.schema';
 import { UsersRepository } from './users.repository';
+import { FilterAndPaginateDto } from './utils/dto/request/filter-user.dto';
 import { UpdateUserDto } from './utils/dto/request/update-user.dto';
 
 @Injectable()
@@ -15,6 +17,11 @@ export class UsersService {
 
   getUser = (user: UserDocument) =>
     this.userRepository.findOneById(user._id).then((user) => this.userMapper.toGetUserDto(user));
+
+  async getPaginatedUsersWithFilter(filterAndPaginateDto: FilterAndPaginateDto) {
+    const users = await this.userRepository.findManyWithFilter(filterAndPaginateDto);
+    return new PaginationDto(this.userMapper.toGetUsersLightListDto(users.docs), users);
+  }
 
   async updateUser(user: UserDocument, updateUserDto: UpdateUserDto) {
     let avatarUrl;
