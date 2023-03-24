@@ -8,6 +8,8 @@ import Ffmpeg = require('fluent-ffmpeg');
 export class CloudinaryService {
   uploadFileAndGetUrl = (file: MemoryStoredFile) => this.uploadFile(file).then((data) => data.url);
 
+  uploadManyFilesAndGetUrl = (files: MemoryStoredFile[]) => Promise.all(files.map(file => this.uploadFile(file).then((data) => data.url)))
+
   async uploadFile(file: MemoryStoredFile): Promise<UploadApiResponse> {
     const ressourceType = file.fileType.mime.startsWith('video') ? 'video' : 'image';
     return new Promise((resolve, reject) => {

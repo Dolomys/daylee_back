@@ -65,21 +65,7 @@ export class ArticleController {
   getOne(@Param('articleId', ArticleByIdPipe) article: ArticleDocument) {
     return this.articleService.getArticleWithComments(article);
   }
-
-  // @ProtectOwner()
-  // @Patch(':articleId')
-  // @FormDataRequest()
-  // @ApiConsumes('multipart/form-data')
-  // @ApiParam({ name: 'articleId', type: String })
-  // @ApiOperation({ summary: 'Update Article by ID' })
-  // @ApiOkResponse({ description: 'SUCCESS', type: GetArticleDto })
-  // update(
-  //   @Param('articleId', ArticleByIdPipe) articleToUpdate: ArticleDocument,
-  //   @Body() updateArticleDto: UpdateArticleDto,
-  // ) {
-  //   return this.articleService.updateArticle(articleToUpdate, updateArticleDto);
-  // }
-
+  
   @ProtectOwner()
   @Delete(':articleId')
   @ApiOperation({ summary: 'Delete Article by ID' })

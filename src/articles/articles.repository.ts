@@ -55,13 +55,6 @@ export class ArticleRepository {
   findOneById = (articleId: string) =>
     this.articleModel.findOne({ _id: articleId }).populate('owner').exec().then(this.orThrow);
 
-  update = (articleToUpdate: ArticleDocument, newArticle: Partial<Article>): Promise<ArticleDocument> =>
-    this.articleModel
-      .findOneAndUpdate({ _id: articleToUpdate.id }, newArticle, { new: true })
-      .populate('owner')
-      .exec()
-      .then(this.orThrow);
-
   delete = (articleFilterQuery: FilterQuery<Article>) =>
     this.articleModel.findOneAndRemove(articleFilterQuery).exec().then(this.orThrow);
 

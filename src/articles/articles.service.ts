@@ -8,7 +8,6 @@ import { ArticleMapper } from './article.mapper';
 import { ArticleDocument } from './article.schema';
 import { ArticleRepository } from './articles.repository';
 import { CreateArticleDto } from './dto/request/create-article.dto';
-import { UpdateArticleDto } from './dto/request/update-article.dto';
 import { GetArticleDto } from './dto/response/get-article.dto';
 
 @Injectable()
@@ -48,21 +47,16 @@ export class ArticleService {
   }
 
   async createArticle(createArticleDto: CreateArticleDto, user: UserDocument) {
-    const photoUrl = await this.cloudinaryService.uploadFileAndGetUrl(createArticleDto.image);
+    const photoUrls = await this.cloudinaryService.uploadManyFilesAndGetUrl(createArticleDto.images);
     const newArticle = {
       ...createArticleDto,
-      photoUrl: photoUrl,
+      photoUrls: photoUrls,
       owner: user,
     };
 
     const articleCreated = await this.articleRepository.create(newArticle);
     return this.articleMapper.toGetArticleDto(articleCreated);
   }
-
-  updateArticle = (articleToUpdate: ArticleDocument, updateArticleDto: UpdateArticleDto) =>
-    this.articleRepository
-      .update(articleToUpdate, updateArticleDto)
-      .then((updatedArticle) => this.getArticleWithComments(updatedArticle));
 
   deleteArticle = (articleId: string) => this.articleRepository.delete({ _id: articleId });
 

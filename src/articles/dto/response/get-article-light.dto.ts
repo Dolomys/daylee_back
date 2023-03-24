@@ -10,7 +10,7 @@ export class GetArticleLightDto {
   description: string;
 
   @ApiProperty()
-  photoUrl: string;
+  photoUrls: string[];
 
   @ApiProperty()
   commentCount: number;

@@ -10,8 +10,8 @@ export class Article extends Document {
   @Prop({ required: true })
   description: string;
 
-  @Prop()
-  photoUrl: string;
+  @Prop({required: true})
+  photoUrls: string[];
 
   @Prop()
   likes?: Types.ObjectId[];

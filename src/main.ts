@@ -1,4 +1,3 @@
-import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder } from '@nestjs/swagger';
@@ -13,13 +12,6 @@ async function bootstrap() {
   const configService = app.get(ConfigService<EnvironmentVariables, true>);
 
   app
-    .useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transformOptions: { enableImplicitConversion: true },
-      }),
-    )
     .useGlobalFilters(new MongoExceptionFilter())
     .useWebSocketAdapter(new SocketIoAdapter(app));
 

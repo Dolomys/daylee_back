@@ -10,7 +10,7 @@ export class GetArticleDto {
   content: string;
 
   @ApiProperty()
-  photoUrl: string;
+  photoUrls: string[];
 
   @ApiProperty()
   owner: GetUserDtoLight;
