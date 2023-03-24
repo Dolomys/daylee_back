@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { NestjsFormDataModule } from 'nestjs-form-data/dist/nestjs-form-data.module';
 import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
+import { FollowModule } from 'src/follow/follow.module';
 import { UsersModule } from 'src/users/users.module';
 import { ArticleMapper } from './article.mapper';
 import { Article, ArticleSchema } from './article.schema';
@@ -17,6 +18,7 @@ import { CommentsModule } from './comments/comments.module';
     CloudinaryModule,
     forwardRef(() => CommentsModule),
     forwardRef(() => UsersModule),
+    forwardRef(() => FollowModule),
     MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
   ],

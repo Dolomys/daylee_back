@@ -33,6 +33,22 @@ export class ArticleController {
   }
 
   @Protect()
+  @Get('feed')
+  @ApiOperation({ summary: 'Get Followings Feed Articles Paginated' })
+  @ApiPaginatedDto(GetArticleLightDto)
+  getFeedPaginated(@ConnectedUser() user: UserDocument, @Query() paginationOptionsDto: PaginationOptionsDto) {
+    return this.articleService.getFeed(user, paginationOptionsDto);
+  }
+
+  @Protect()
+  @Get('personal')
+  @ApiOperation({ summary: 'Get Connected User Feed Articles Paginated' })
+  @ApiPaginatedDto(GetArticleLightDto)
+  getPersonalFeedPaginated(@ConnectedUser() user: UserDocument, @Query() paginationOptionsDto: PaginationOptionsDto) {
+    return this.articleService.getPersonalFeed(user, paginationOptionsDto);
+  }
+
+  @Protect()
   @Post()
   @FormDataRequest()
   @ApiConsumes('multipart/form-data')

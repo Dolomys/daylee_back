@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { FollowRepository } from 'src/follow/follow.repository';
 import { UserDocument } from 'src/users/user.schema';
 import { PaginationOptionsDto } from 'src/utils/tools/dto/request/pagination-options.dto';
 import { PaginationDto } from 'src/utils/tools/dto/response/get-items-paginated.dto';
@@ -16,6 +17,7 @@ export class ArticleService {
     private readonly cloudinaryService: CloudinaryService,
     private readonly articleRepository: ArticleRepository,
     private readonly articleMapper: ArticleMapper,
+    private readonly followRepository: FollowRepository,
   ) {}
 
   async isOwner(user: UserDocument, articleId: string): Promise<boolean> {
@@ -30,14 +32,23 @@ export class ArticleService {
 
   async getArticles(paginationOptionsDto: PaginationOptionsDto) {
     const articles = await this.articleRepository.findAllWithPaginate(paginationOptionsDto);
+    return new PaginationDto(await this.articleMapper.toGetArticleListLightDto(articles.docs), articles);
+  }
 
+  async getFeed(user: UserDocument, paginationOptionsDto: PaginationOptionsDto) {
+    const followingUsers = await this.followRepository.getUserFollowingsByIdOrThrow(user.id);
+    const formatedArray = followingUsers.map((item) => item.following);
+    const articles = await this.articleRepository.findArticleFeedPaginate(formatedArray, paginationOptionsDto);
+    return new PaginationDto(await this.articleMapper.toGetArticleListLightDto(articles.docs), articles);
+  }
+
+  async getPersonalFeed(user: UserDocument, paginationOptionsDto: PaginationOptionsDto) {
+    const articles = await this.articleRepository.findArticleFeedPaginate(user, paginationOptionsDto);
     return new PaginationDto(await this.articleMapper.toGetArticleListLightDto(articles.docs), articles);
   }
 
   async createArticle(createArticleDto: CreateArticleDto, user: UserDocument) {
-    const responseUpload = await this.cloudinaryService.uploadImage(createArticleDto.image);
-    const photoUrl = responseUpload.url;
-    console.log(photoUrl);
+    const photoUrl = await this.cloudinaryService.uploadFileAndGetUrl(createArticleDto.image);
     const newArticle = {
       ...createArticleDto,
       photoUrl: photoUrl,

@@ -34,6 +34,22 @@ export class ArticleRepository {
     return await this.articleModel.paginate({}, options);
   }
 
+  async findArticleFeedPaginate(following: UserDocument[] | UserDocument, paginationOptionsDto: PaginationOptionsDto) {
+    const options = {
+      page: paginationOptionsDto.page ?? 1,
+      limit: PAGINATE_QUERY_LIMIT,
+      populate: 'owner',
+    };
+    return await this.articleModel.paginate(
+      {
+        owner: {
+          $in: following,
+        },
+      },
+      options,
+    );
+  }
+
   findAll = () => this.articleModel.find().populate('owner').exec().then(this.orThrowArray);
 
   findOneById = (articleId: string) =>

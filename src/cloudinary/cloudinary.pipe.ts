@@ -8,7 +8,7 @@ export class UploadCloudinaryPipe implements PipeTransform {
   async transform(value: any, metadata: ArgumentMetadata) {
     if (value) {
       try {
-        const apiResponse = await this.CloudinaryService.uploadImage(value);
+        const apiResponse = await this.CloudinaryService.uploadFile(value);
         return apiResponse.url;
       } catch (err) {
         throw new BadRequestException(err);

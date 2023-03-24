@@ -18,7 +18,7 @@ export class UsersService {
 
   async updateUser(user: UserDocument, updateUserDto: UpdateUserDto) {
     let avatarUrl;
-    if (updateUserDto.image) avatarUrl = await this.cloudinaryService.uploadImageAndGetUrl(updateUserDto.image);
+    if (updateUserDto.image) avatarUrl = await this.cloudinaryService.uploadFileAndGetUrl(updateUserDto.image);
 
     return this.userRepository
       .updateUser(user._id, {

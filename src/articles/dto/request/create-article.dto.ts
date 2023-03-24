@@ -9,6 +9,6 @@ export class CreateArticleDto {
 
   @ApiProperty({ type: 'file' })
   @IsFile()
-  @HasMimeType(['image/jpeg', 'image/png'])
+  @HasMimeType(['image/jpeg', 'image/png', 'video/mp4'])
   image: MemoryStoredFile;
 }

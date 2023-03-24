@@ -26,10 +26,9 @@ export class UsersController {
   @Patch()
   @FormDataRequest()
   @ApiConsumes('multipart/form-data')
-  @ApiParam({ name: 'userId', type: String })
-  @ApiOperation({ summary: 'Get User By ID' })
+  @ApiOperation({ summary: 'Update Connected User' })
   @ApiOkResponse({ description: 'SUCCESS', type: GetUserDto })
-  updateConnectedUser(@ConnectedUser() user: UserDocument,@Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.updateUser(user,updateUserDto);
+  updateConnectedUser(@ConnectedUser() user: UserDocument, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateUser(user, updateUserDto);
   }
 }
