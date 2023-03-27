@@ -1,12 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
-import { Query } from '@nestjs/common/decorators/http/route-params.decorator';
+import { Body, Controller, Delete, Get, Param, ParseFilePipe, Post, UseInterceptors } from '@nestjs/common';
+import { Query, UploadedFiles } from '@nestjs/common/decorators/http/route-params.decorator';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { FormDataRequest } from 'nestjs-form-data/dist/decorators';
 import { UserDocument } from 'src/users/user.schema';
 import { Protect, ProtectOwner } from 'src/utils/decorator/auth.decorator';
 import { ConnectedUser } from 'src/utils/decorator/customAuth.decorator';
 import { ApiPaginatedDto } from 'src/utils/tools/dto/api-pagined-dto.decorator';
 import { PaginationOptionsDto } from 'src/utils/tools/dto/request/pagination-options.dto';
+import { CustomFilesTypeValidator } from 'src/utils/validator/file.validator';
 import { ArticleDocument } from './article.schema';
 import { ArticleService } from './articles.service';
 import { CommentByIdPipe } from './comments/comment.pipe';
@@ -50,12 +51,21 @@ export class ArticleController {
 
   @Protect()
   @Post()
-  @FormDataRequest()
+  @UseInterceptors(FilesInterceptor('images'))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Add Article' })
   @ApiOkResponse({ description: 'SUCCESS', type: GetArticleDto })
-  create(@ConnectedUser() user: UserDocument, @Body() createArticleDto: CreateArticleDto) {
-    return this.articleService.createArticle(createArticleDto, user);
+  create(
+    @ConnectedUser() user: UserDocument,
+    @UploadedFiles(
+      new ParseFilePipe({
+        validators: [new CustomFilesTypeValidator({})],
+      }),
+    )
+    images: Express.Multer.File[],
+    @Body() createArticleDto: CreateArticleDto,
+  ) {
+    return this.articleService.createArticle(images, createArticleDto.description, user);
   }
 
   @Get(':articleId')
@@ -65,7 +75,7 @@ export class ArticleController {
   getOne(@Param('articleId', ArticleByIdPipe) article: ArticleDocument) {
     return this.articleService.getArticleWithComments(article);
   }
-  
+
   @ProtectOwner()
   @Delete(':articleId')
   @ApiOperation({ summary: 'Delete Article by ID' })

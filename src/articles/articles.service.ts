@@ -7,7 +7,6 @@ import { PaginationDto } from 'src/utils/tools/dto/response/get-items-paginated.
 import { ArticleMapper } from './article.mapper';
 import { ArticleDocument } from './article.schema';
 import { ArticleRepository } from './articles.repository';
-import { CreateArticleDto } from './dto/request/create-article.dto';
 import { GetArticleDto } from './dto/response/get-article.dto';
 
 @Injectable()
@@ -46,10 +45,10 @@ export class ArticleService {
     return new PaginationDto(await this.articleMapper.toGetArticleListLightDto(articles.docs), articles);
   }
 
-  async createArticle(createArticleDto: CreateArticleDto, user: UserDocument) {
-    const photoUrls = await this.cloudinaryService.uploadManyFilesAndGetUrl(createArticleDto.images);
+  async createArticle(images: Express.Multer.File[], description: string, user: UserDocument) {
+    const photoUrls = await this.cloudinaryService.uploadManyFilesAndGetUrl(images);
     const newArticle = {
-      ...createArticleDto,
+      description: description,
       photoUrls: photoUrls,
       owner: user,
     };
