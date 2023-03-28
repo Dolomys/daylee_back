@@ -53,7 +53,7 @@ export class ArticleController {
   @Post()
   @UseInterceptors(FilesInterceptor('images'))
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Add Article' })
+  @ApiOperation({ summary: 'Create Article' })
   @ApiOkResponse({ description: 'SUCCESS', type: GetArticleDto })
   create(
     @ConnectedUser() user: UserDocument,
