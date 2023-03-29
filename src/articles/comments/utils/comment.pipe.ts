@@ -1,11 +1,11 @@
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
-import { CommentService } from './comments.service';
+import { CommentRepository } from '../comments.repository';
 
 @Injectable()
 export class CommentByIdPipe implements PipeTransform {
-  constructor(private readonly commentService: CommentService) {}
+  constructor(private readonly commentRepository: CommentRepository) {}
 
   transform(value: any, metadata: ArgumentMetadata) {
-    return this.commentService.getCommentById(value);
+    return this.commentRepository.findCommentById(value);
   }
 }

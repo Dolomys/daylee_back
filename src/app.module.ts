@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { FollowModule } from './follow/follow.module';
+import { LikesModule } from './likes/likes.module';
 import { StoryModule } from './stories/stories.module';
 import { UsersModule } from './users/users.module';
 import { validateEnv } from './utils/config/configuration';
@@ -28,6 +29,7 @@ import { validateEnv } from './utils/config/configuration';
     FollowModule,
     ChatModule,
     StoryModule,
+    LikesModule
   ],
 })
 export class AppModule {}

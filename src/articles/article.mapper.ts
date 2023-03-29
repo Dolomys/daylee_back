@@ -25,12 +25,11 @@ export class ArticleMapper {
     Promise.all(articles.map((x) => this.toGetArticleLightDto(x)));
 
   async toGetArticleLightDto(article: ArticleDocument): Promise<GetArticleLightDto> {
-    const commentCount = await this.commentRepository.countCommentsByArticle(article);
     return {
       id: article.id,
       description: article.description,
-      commentCount: commentCount,
-      likeCount: article.likes?.length ?? 0,
+      likeCount: article.likeCount,
+      commentCount: article.commentCount,
       photoUrls: article.photoUrls,
       owner: article.owner && this.userMapper.toGetUserLightDto(article.owner),
     };

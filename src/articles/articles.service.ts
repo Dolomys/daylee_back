@@ -23,7 +23,7 @@ export class ArticleService {
     return article.owner.id === user.id;
   }
 
-  getArticleWithComments = (article: ArticleDocument): Promise<GetArticleDto> =>
+  getArticleFull = (article: ArticleDocument): Promise<GetArticleDto> =>
     this.articleMapper.toGetArticleDto(article);
 
   getArticleById = (articleId: string): Promise<ArticleDocument> => this.articleRepository.findOneById(articleId);
@@ -58,15 +58,4 @@ export class ArticleService {
   }
 
   deleteArticle = (articleId: string) => this.articleRepository.delete({ _id: articleId });
-
-  addLikeToArticle(article: ArticleDocument, user: UserDocument) {
-    if (article.likes?.includes(user._id))
-      return this.articleRepository
-        .removeLike(article, user)
-        .then((updatedArticle) => this.articleMapper.toGetArticleLightDto(updatedArticle));
-    else
-      return this.articleRepository
-        .addLike(article, user)
-        .then((updatedArticle) => this.articleMapper.toGetArticleLightDto(updatedArticle));
-  }
 }

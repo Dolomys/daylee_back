@@ -19,6 +19,10 @@ export class CommentRepository {
 
   addComment = (comment: any) => this.commentModel.create(comment);
 
+  isOwner(user: UserDocument, comment: CommentDocument) {
+    comment.owner = user;
+  }
+
   findCommentById = (commentId: string) =>
     this.commentModel.findOne({ _id: commentId }).populate('owner').exec().then(this.orThrow);
 
@@ -37,4 +41,6 @@ export class CommentRepository {
     this.commentModel.find({ parentComment: comment }).populate('owner').exec();
 
   findCommentsByOwner = (owner: UserDocument) => this.commentModel.find({ owner: owner }).populate('article').exec();
+
+  deleteComment = (comment: CommentDocument) => this.commentModel.deleteOne({ comment }).exec().then(this.orThrow);
 }

@@ -10,11 +10,7 @@ import { PaginationOptionsDto } from 'src/utils/tools/dto/request/pagination-opt
 import { CustomFilesTypeValidator } from 'src/utils/validator/file.validator';
 import { ArticleDocument } from './article.schema';
 import { ArticleService } from './articles.service';
-import { CommentByIdPipe } from './comments/comment.pipe';
-import { CommentDocument } from './comments/comment.schema';
 import { CommentService } from './comments/comments.service';
-import { CreateCommentaryDto } from './comments/dto/request/create-commentary.dto';
-import { GetCommentaryDto } from './comments/dto/response/get-commentary.dto';
 import { CreateArticleDto } from './dto/request/create-article.dto';
 import { GetArticleLightDto } from './dto/response/get-article-light.dto';
 import { GetArticleDto } from './dto/response/get-article.dto';
@@ -73,7 +69,7 @@ export class ArticleController {
   @ApiOperation({ summary: 'Get Article by ID' })
   @ApiOkResponse({ description: 'SUCCESS', type: GetArticleDto })
   getOne(@Param('articleId', ArticleByIdPipe) article: ArticleDocument) {
-    return this.articleService.getArticleWithComments(article);
+    return this.articleService.getArticleFull(article);
   }
 
   @ProtectOwner()
@@ -86,28 +82,5 @@ export class ArticleController {
       statusCode: 204,
       message: 'article deleted',
     };
-  }
-
-  @Protect()
-  @Post(':articleId/like')
-  @ApiOperation({ summary: 'Toggle Like on post' })
-  @ApiParam({ name: 'articleId', type: String })
-  @ApiOkResponse({ description: 'SUCCESS', type: GetArticleLightDto })
-  addLikeToArticle(@Param('articleId', ArticleByIdPipe) article: ArticleDocument, @ConnectedUser() user: UserDocument) {
-    return this.articleService.addLikeToArticle(article, user);
-  }
-
-  @Protect()
-  @Post(':articleId/comment')
-  @ApiParam({ name: 'articleId', type: String })
-  @ApiOperation({ summary: 'Add comment to post' })
-  @ApiOkResponse({ type: GetCommentaryDto })
-  addComment(
-    @Param('articleId', ArticleByIdPipe) article: ArticleDocument,
-    @Body() createCommentaryDto: CreateCommentaryDto,
-    @ConnectedUser() user: UserDocument,
-    @Body('commentParentId', CommentByIdPipe) parentComment?: CommentDocument,
-  ) {
-    return this.commentService.addComment(user, createCommentaryDto, article, parentComment);
   }
 }

@@ -58,17 +58,13 @@ export class ArticleRepository {
   delete = (articleFilterQuery: FilterQuery<Article>) =>
     this.articleModel.findOneAndRemove(articleFilterQuery).exec().then(this.orThrow);
 
-  addLike = (article: ArticleDocument, user: UserDocument) =>
-    this.articleModel
-      .findOneAndUpdate({ _id: article.id }, { $push: { likes: user._id } }, { new: true })
-      .populate('owner')
-      .exec()
-      .then(this.orThrow);
+    async updateLikesCount(article: ArticleDocument, countChange: number): Promise<ArticleDocument> {
+      article.likeCount += countChange;
+      return await article.save();
+    }
 
-  removeLike = (article: ArticleDocument, user: UserDocument) =>
-    this.articleModel
-      .findOneAndUpdate({ _id: article.id }, { $pull: { likes: user._id } }, { new: true })
-      .populate('owner')
-      .exec()
-      .then(this.orThrow);
+    async updateCommentsCount(article: ArticleDocument, countChange: number): Promise<ArticleDocument> {
+      article.commentCount += countChange;
+      return await article.save();
+    }
 }

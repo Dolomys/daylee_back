@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document, HydratedDocument, Types } from 'mongoose';
+import mongoose, { Document, HydratedDocument } from 'mongoose';
 import * as paginate from 'mongoose-paginate-v2';
 import { UserDocument } from 'src/users/user.schema';
 
@@ -14,7 +14,10 @@ export class Article extends Document {
   photoUrls: string[];
 
   @Prop()
-  likes?: Types.ObjectId[];
+  likeCount: number;
+
+  @Prop()
+  commentCount: number
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   owner: UserDocument;
