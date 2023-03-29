@@ -7,10 +7,7 @@ import { GetArticleDto } from './dto/response/get-article.dto';
 
 @Injectable()
 export class ArticleMapper {
-  constructor(
-    private readonly userMapper: UserMapper,
-    private readonly commentRepository: CommentRepository,
-  ) {}
+  constructor(private readonly userMapper: UserMapper, private readonly commentRepository: CommentRepository) {}
 
   async toGetArticleDto(article: ArticleDocument): Promise<GetArticleDto> {
     return {

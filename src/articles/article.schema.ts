@@ -10,14 +10,14 @@ export class Article extends Document {
   @Prop({ required: true })
   description: string;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   photoUrls: string[];
 
-  @Prop()
+  @Prop({ default: 0 })
   likeCount: number;
 
-  @Prop()
-  commentCount: number
+  @Prop({ default: 0 })
+  commentCount: number;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   owner: UserDocument;

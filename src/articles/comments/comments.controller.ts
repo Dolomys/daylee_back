@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
+import { ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserDocument } from 'src/users/user.schema';
 import { Protect } from 'src/utils/decorator/auth.decorator';
 import { ConnectedUser } from 'src/utils/decorator/customAuth.decorator';
@@ -20,7 +20,7 @@ export class CommentsController {
 
   @Protect()
   @Get(':articleId')
-  @ApiOperation({ description: 'Get comments paginated from article ID' })
+  @ApiOperation({ summary: 'Get comments paginated from article ID' })
   @ApiParam({ name: 'articleId', type: String })
   @ApiPaginatedDto(GetCommentaryDto)
   getArticleCommentsPaginated(
@@ -44,10 +44,10 @@ export class CommentsController {
   }
 
   @Protect()
-  @Post(':commentId')
+  @Delete(':commentId')
   @ApiParam({ name: 'commentId', type: String })
-  @ApiOperation({ summary: 'Add comment to post' })
-  @ApiOkResponse({ type: GetCommentaryDto })
+  @ApiOperation({ summary: 'Delete Comment by CommentId' })
+  @ApiNoContentResponse({ description: 'SUCCESS' })
   removeComment(@Param('commentId', CommentByIdPipe) comment: CommentDocument, @ConnectedUser() user: UserDocument) {
     return this.commentService.removeComment(user, comment);
   }

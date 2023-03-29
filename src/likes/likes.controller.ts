@@ -26,7 +26,7 @@ export class LikesController {
   @Protect()
   @Get(':articleId')
   @ApiParam({ name: 'articleId', type: String })
-  @ApiOperation({ summary: 'Toggle Like on Article' })
+  @ApiOperation({ summary: 'Get All Like by articleId' })
   @ApiOkResponse({ description: 'SUCCESS', type: [GetUserDtoLight] })
   getLikeList(@Param('articleId', ArticleByIdPipe) article: ArticleDocument) {
     return this.likesService.getArticleLikesUsersList(article);
