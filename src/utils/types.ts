@@ -14,8 +14,8 @@ export type CreateStoryType = {
 };
 
 export type ArticleDocumentHasLiked = {
-  article: ArticleDocument,
-  hasLiked: boolean
-}
+  article: ArticleDocument;
+  hasLiked: boolean;
+};
 
 export type SocketWithAuth = Socket & PayloadType;
