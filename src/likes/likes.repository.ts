@@ -21,7 +21,7 @@ export class LikesRepository {
 
   findOne = (likeId: Types.ObjectId) => this.likeModel.findById(likeId).populate('owner').exec().then(this.orThrow);
 
-  delete = (like: LikeDocument) => this.likeModel.deleteOne({ id: like.id }).populate('owner').exec().then(this.orThrow);
+  delete = (like: LikeDocument) => this.likeModel.remove({ id: like.id }).then(this.orThrow);
 
   findArticleLikes = (article: ArticleDocument) =>
     this.likeModel.find({ entity: article }).populate('owner').exec().then(this.orThrow);
