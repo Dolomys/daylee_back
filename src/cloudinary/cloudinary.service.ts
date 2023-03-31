@@ -13,7 +13,7 @@ export class CloudinaryService {
 
   async uploadFile(file: Express.Multer.File | MemoryStoredFile): Promise<UploadApiResponse> {
     const ressourceType =
-      file instanceof MemoryStoredFile ? 'image' : file.mimetype.startsWith('video') ? 'video' : 'image';
+      !file.mimetype ? 'image' : file.mimetype.startsWith('video') ? 'video' : 'image';
 
     return new Promise((resolve, reject) => {
       const upload = v2.uploader.upload_stream({ resource_type: ressourceType, secure: true }, (error, result) => {
