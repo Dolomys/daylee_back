@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserMapper } from 'src/users/user.mapper';
+import { ArticleDocumentHasLiked } from 'src/utils/types';
 import { ArticleDocument } from './article.schema';
 import { CommentRepository } from './comments/comments.repository';
 import { GetArticleLightDto } from './dto/response/get-article-light.dto';
@@ -18,10 +19,10 @@ export class ArticleMapper {
     };
   }
 
-  toGetArticleListLightDto = (articles: ArticleDocument[]): Promise<GetArticleLightDto[]> =>
-    Promise.all(articles.map((x) => this.toGetArticleLightDto(x)));
+  toGetArticleListLightDto = (articles: ArticleDocumentHasLiked[]): Promise<GetArticleLightDto[]> =>
+    Promise.all(articles.map((x) => this.toGetArticleLightDto(x.article, x.hasLiked)));
 
-  async toGetArticleLightDto(article: ArticleDocument): Promise<GetArticleLightDto> {
+  async toGetArticleLightDto(article: ArticleDocument, hasLiked?: boolean): Promise<GetArticleLightDto> {
     return {
       id: article.id,
       description: article.description,
@@ -29,6 +30,7 @@ export class ArticleMapper {
       commentCount: article.commentCount,
       photoUrls: article.photoUrls,
       owner: article.owner && this.userMapper.toGetUserLightDto(article.owner),
+      hasConnectedUserLiked: hasLiked,
     };
   }
 }

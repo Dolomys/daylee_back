@@ -20,4 +20,7 @@ export class GetArticleLightDto {
 
   @ApiProperty()
   owner?: GetUserDtoLight;
+
+  @ApiProperty({ type: Boolean, nullable: true })
+  hasConnectedUserLiked?: boolean;
 }

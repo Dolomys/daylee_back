@@ -22,16 +22,20 @@ export class LikesService {
     return this.userMapper.toGetUsersLightListDto(likeOwner);
   }
 
+  async isLikedByUser(article: ArticleDocument, user: UserDocument): Promise<boolean> {
+    const isLiked = await this.likesRepository.findArticleLike(article, user);
+    return isLiked ? true : false;
+  }
+
   async toggleLike(article: ArticleDocument, user: UserDocument) {
     const articleLike = await this.likesRepository.findArticleLike(article, user);
-    let newArticle: ArticleDocument;
+    const increment = articleLike ? -1 : 1;
     if (!articleLike) {
       await this.likesRepository.create({ entity: article, owner: user });
-      newArticle = await this.articleRepository.updateLikesCount(article, 1);
     } else {
       await this.likesRepository.delete(articleLike);
-      newArticle = await this.articleRepository.updateLikesCount(article, -1);
     }
-    return this.articleMapper.toGetArticleLightDto(newArticle);
+    const newArticle = await this.articleRepository.updateLikesCount(article, increment);
+    return this.articleMapper.toGetArticleLightDto(newArticle, !articleLike);
   }
 }

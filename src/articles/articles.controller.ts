@@ -25,8 +25,8 @@ export class ArticleController {
   @Get()
   @ApiOperation({ summary: 'Get All Articles Paginated' })
   @ApiPaginatedDto(GetArticleLightDto)
-  findAllPaginated(@Query() paginationOptionsDto: PaginationOptionsDto) {
-    return this.articleService.getArticles(paginationOptionsDto);
+  findAllPaginated(@ConnectedUser() user: UserDocument, @Query() paginationOptionsDto: PaginationOptionsDto) {
+    return this.articleService.getArticles(paginationOptionsDto, user);
   }
 
   @Protect()
