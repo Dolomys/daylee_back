@@ -51,7 +51,6 @@ export function validateEnv(config: Record<string, unknown>) {
     fileExistsSync(YAML_CONFIG_FILENAME) &&
     (yaml.load(readFileSync(YAML_CONFIG_FILENAME, 'utf8')) as Record<string, unknown>);
 
-    console.log(yamlConfig)
   const validatedConfig = plainToInstance(EnvironmentVariables, object({ ...config, ...yamlConfig,...process.env }), {
     enableImplicitConversion: true,
   });

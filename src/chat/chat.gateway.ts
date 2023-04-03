@@ -23,7 +23,6 @@ export class ChatGateway implements NestGateway {
 
   handleConnection(client: SocketWithAuth) {
     const sockets = this.io.sockets;
-    console.log(sockets.size);
   }
 
   handleDisconnect(client: SocketWithAuth) {}
