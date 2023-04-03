@@ -3,6 +3,7 @@ import { Query, UploadedFiles } from '@nestjs/common/decorators/http/route-param
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserDocument } from 'src/users/user.schema';
+import { UserByIdPipe } from 'src/users/utils/user.pipe';
 import { Protect, ProtectOwner } from 'src/utils/decorator/auth.decorator';
 import { ConnectedUser } from 'src/utils/decorator/customAuth.decorator';
 import { ApiPaginatedDto } from 'src/utils/tools/dto/api-pagined-dto.decorator';
@@ -38,14 +39,6 @@ export class ArticleController {
   }
 
   @Protect()
-  @Get('personal')
-  @ApiOperation({ summary: 'Get Connected User Feed Articles Paginated' })
-  @ApiPaginatedDto(GetArticleLightDto)
-  getPersonalFeedPaginated(@ConnectedUser() user: UserDocument, @Query() paginationOptionsDto: PaginationOptionsDto) {
-    return this.articleService.getPersonalFeed(user, paginationOptionsDto);
-  }
-
-  @Protect()
   @Post()
   @UseInterceptors(FilesInterceptor('images'))
   @ApiConsumes('multipart/form-data')
@@ -63,8 +56,17 @@ export class ArticleController {
   ) {
     return this.articleService.createArticle(images, createArticleDto.description, user);
   }
+  
+  @Protect()
+  @Get('feed/:userId')
+  @ApiParam({ name: 'userId', type: String })
+  @ApiOperation({ summary: 'Get User Feed Articles Paginated' })
+  @ApiPaginatedDto(GetArticleLightDto)
+  getUserFeedPaginated(@Param('userId', UserByIdPipe) user: UserDocument, @Query() paginationOptionsDto: PaginationOptionsDto) {
+    return this.articleService.getUserFeed(user, paginationOptionsDto);
+  }
 
-  @Get(':articleId')
+  @Get('single/:articleId')
   @ApiParam({ name: 'articleId', type: String })
   @ApiOperation({ summary: 'Get Article by ID' })
   @ApiOkResponse({ description: 'SUCCESS', type: GetArticleDto })

@@ -60,7 +60,7 @@ export class ArticleService {
     return new PaginationDto(await this.articleMapper.toGetArticleListLightDto(articlesWithHasLiked), articles);
   }
 
-  async getPersonalFeed(user: UserDocument, paginationOptionsDto: PaginationOptionsDto) {
+  async getUserFeed(user: UserDocument, paginationOptionsDto: PaginationOptionsDto) {
     const articles = await this.articleRepository.findArticleFeedPaginate(user, paginationOptionsDto);
     const articlesWithHasLiked = await this.articlesWithHasLiked(articles, user);
     return new PaginationDto(await this.articleMapper.toGetArticleListLightDto(articlesWithHasLiked), articles);
