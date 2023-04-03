@@ -36,7 +36,7 @@ export class FollowController {
   @ApiOperation({ summary: 'Follow user by ID' })
   @ApiNoContentResponse({ description: 'SUCCESS' })
   followUser(@ConnectedUser() user: UserDocument, @Param('userId', UserByIdPipe) userToFollow: UserDocument) {
-    return this.followService.followUser(user, userToFollow);
+    this.followService.followUser(user, userToFollow);
   }
 
   @ProtectFollow()

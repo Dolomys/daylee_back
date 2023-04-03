@@ -4,9 +4,9 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder } from '@nestjs/swagger';
 import { SwaggerModule } from '@nestjs/swagger/dist';
 import { AppModule } from './app.module';
-import { SocketIoAdapter } from './chat/socket-io-adapter';
 import { EnvironmentVariables } from './utils/config/configuration';
 import { MongoExceptionFilter } from './utils/mongoExceptions';
+import { SocketIoAdapter } from './utils/sockets/socket-io-adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

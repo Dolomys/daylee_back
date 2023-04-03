@@ -11,6 +11,8 @@ import { Chat } from './chat.schema';
 import { CreateRoomDto } from './utils/dto/request/create-room.dto';
 import { JoinRoomDto } from './utils/dto/request/join-room-dto';
 import { NewMessageDto } from './utils/dto/request/new-message.dto';
+import { GetRoomDto } from './utils/dto/response/get-rooms.dto';
+import { LastTimeUserLeftInterface } from './utils/last-time-user-left.interface';
 
 @Injectable()
 export class ChatService {
@@ -35,7 +37,7 @@ export class ChatService {
       IsPrivate: createRoomDto.isPrivate,
       participants: participants,
     });
-    client.join(newRoom._id.toString())
+    client.join(newRoom._id.toString());
     client.emit('message', `${client.username} created room ${newRoom._id.toString()}`);
   }
 
@@ -48,11 +50,21 @@ export class ChatService {
     this.chatRepository.saveChat(chat);
   }
 
-  getUsersRooms = (user: UserDocument) => this.chatRepository.getRoomsByUser(user.id);
+  async getUsersRooms(user: UserDocument): Promise<GetRoomDto[]> {
+    const rooms = await this.chatRepository.getRoomsByUser(user.id);
+    return this.chatMapper.toGetRoomsDto(rooms, user);
+  }
 
   async getRoomMessages(roomId: string, user: UserDocument) {
     const isInRoom = await this.chatRepository.isInRoom(roomId, user.id);
     if (!isInRoom) throw new UnauthorizedException('NOT_IN_ROOM');
     return this.chatRepository.getRoomMessages(roomId).then((data) => this.chatMapper.toGetRoomMessagesDto(data));
+  }
+
+  async addOrUpdateLastLeaveTime(roomId: string, client: SocketWithAuth) {
+    const hasAlreadyLeftTime = await this.chatRepository.isParticipantFirstTimeLeaveRoom(roomId, client.id);
+    const lastTimeUserLeft: LastTimeUserLeftInterface = { userId: client.id, lastDisconnect: new Date(Date.now()) };
+    if (!hasAlreadyLeftTime) await this.chatRepository.addRoomTimeLeft(roomId, lastTimeUserLeft);
+    else await this.chatRepository.updateRoomTimeLeft(roomId, lastTimeUserLeft);
   }
 }

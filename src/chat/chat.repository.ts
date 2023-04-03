@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { UserDocument } from 'src/users/user.schema';
 import { Chat, ChatDocument, ChatRoom, ChatRoomDocument } from './chat.schema';
+import { LastTimeUserLeftInterface } from './utils/last-time-user-left.interface';
 
 @Injectable()
 export class ChatRepository {
@@ -34,6 +35,9 @@ export class ChatRepository {
   getRoomMessages = (roomChatId: string) =>
     this.chatModel.find({ room: roomChatId }).sort({ createdAt: -1 }).populate('sender').exec().then(this.orThrow);
 
+  getLastRoomMessage = (roomChatId: string) =>
+    this.chatModel.findOne({ room: roomChatId }).sort({ createdAt: -1 }).populate('sender').exec().then(this.orThrow);
+
   async isInRoom(roomChatId: string, userId: Types.ObjectId) {
     const inRoom = await this.chatRoomModel.find({ _id: roomChatId, $in: { participants: userId } }).exec();
     return inRoom ? true : false;
@@ -42,6 +46,46 @@ export class ChatRepository {
   getRoomsByUser = (userId: Types.ObjectId) =>
     this.chatRoomModel
       .find({ $in: { participants: userId } })
+      .exec()
+      .then(this.orThrow);
+
+  isParticipantFirstTimeLeaveRoom = async (roomChatId: string, userId: string) => {
+    const chatRoom = await this.chatRoomModel.findOne({ _id: roomChatId }).exec();
+
+    if (!chatRoom || !chatRoom.participantsLastSeen) {
+      throw new Error('Chat room not found');
+    }
+
+    const userIdExists = chatRoom.participantsLastSeen.some((participant) => participant.userId.toString() === userId);
+
+    return userIdExists;
+  };
+
+  updateRoomTimeLeft = (roomChatId: string, lastTimeUserLeftInterface: LastTimeUserLeftInterface) =>
+    this.chatRoomModel
+      .findOneAndUpdate(
+        { _id: roomChatId, 'participantsLastSeen.userId': lastTimeUserLeftInterface.userId },
+        {
+          $set: {
+            'participantsLastSeen.$.lastDisconnect': lastTimeUserLeftInterface.lastDisconnect,
+          },
+        },
+        { upsert: true, new: true },
+      )
+      .exec()
+      .then(this.orThrow);
+
+  addRoomTimeLeft = (roomChatId: string, lastTimeUserLeftInterface: LastTimeUserLeftInterface) =>
+    this.chatRoomModel
+      .findOneAndUpdate(
+        { _id: roomChatId },
+        {
+          $push: {
+            participantsLastSeen: lastTimeUserLeftInterface,
+          },
+        },
+        { new: true },
+      )
       .exec()
       .then(this.orThrow);
 }

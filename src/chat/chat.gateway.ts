@@ -3,32 +3,39 @@ import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSo
 import { NestGateway } from '@nestjs/websockets/interfaces/nest-gateway.interface';
 import { Namespace } from 'socket.io';
 import { SocketWithAuth } from 'src/utils/types';
-import { ChatRepository } from './chat.repository';
+import { WsCatchAllFilter } from '../utils/sockets/exceptions/ws-catch-all-filters';
 import { ChatService } from './chat.service';
 import { CreateRoomDto } from './utils/dto/request/create-room.dto';
 import { JoinRoomDto } from './utils/dto/request/join-room-dto';
 import { NewMessageDto } from './utils/dto/request/new-message.dto';
-import { WsCatchAllFilter } from './utils/exceptions/ws-catch-all-filters';
 
 @UsePipes(new ValidationPipe())
 @UseFilters(new WsCatchAllFilter())
 @WebSocketGateway({ namespace: 'chat' })
 export class ChatGateway implements NestGateway {
-  constructor(private readonly chatService: ChatService, private readonly chatRepository: ChatRepository) {}
+  constructor(private readonly chatService: ChatService) {}
 
   @WebSocketServer()
   io: Namespace;
 
   afterInit(server: any) {}
 
-  handleConnection(client: SocketWithAuth) {
-    const sockets = this.io.sockets;
+  handleConnection(client: SocketWithAuth, ...args: any[]) {
+    console.log(`Client connected: ${client.id}`);
+    client.on('disconnecting', (reason) => {
+      console.log(`DISCONNECTING: ${Array.from(client.rooms)}`);
+      const room = Array.from(client.rooms)
+      this.chatService.addOrUpdateLastLeaveTime(room[1],client)
+    });
   }
 
-  handleDisconnect(client: SocketWithAuth) {}
+  handleDisconnect(client: SocketWithAuth) {
+    console.log(client.rooms)
+  }
 
   @SubscribeMessage('create')
   async handleCreateRoom(@ConnectedSocket() client: SocketWithAuth, @MessageBody() createRoomDto: CreateRoomDto) {
+    console.log("hi")
     this.chatService.createRoom(client, createRoomDto);
   }
 

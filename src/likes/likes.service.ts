@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ArticleMapper } from 'src/articles/article.mapper';
 import { ArticleDocument } from 'src/articles/article.schema';
 import { ArticleRepository } from 'src/articles/articles.repository';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { createNotificationInterface } from 'src/notifications/utils/create-notification.interface';
+import { NotificationTypeEnum } from 'src/notifications/utils/notification-type.enum';
 import { UserMapper } from 'src/users/user.mapper';
 import { UserDocument } from 'src/users/user.schema';
 import { GetUserDtoLight } from 'src/users/utils/dto/response/get-user-light.dto';
@@ -14,6 +17,7 @@ export class LikesService {
     private readonly userMapper: UserMapper,
     private readonly articleMapper: ArticleMapper,
     private readonly articleRepository: ArticleRepository,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async getArticleLikesUsersList(article: ArticleDocument): Promise<GetUserDtoLight[]> {
@@ -32,6 +36,12 @@ export class LikesService {
     const increment = articleLike ? -1 : 1;
     if (!articleLike) {
       await this.likesRepository.create({ entity: article, owner: user });
+      const notification: createNotificationInterface = {
+        notificationType: NotificationTypeEnum.LIKE,
+        article: article,
+        sender: user
+      }
+      await this.notificationsService.createNotification(notification)
     } else {
       await this.likesRepository.delete(articleLike);
     }

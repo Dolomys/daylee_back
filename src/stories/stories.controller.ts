@@ -38,7 +38,7 @@ export class StoriesController {
   @Protect()
   @Get()
   @ApiOperation({ summary: 'Get Following Stories' })
-  @ApiOkResponse({ description: 'SUCCESS', type: GetStoryLightDto })
+  @ApiOkResponse({ description: 'SUCCESS', type: [GetStoryLightDto] })
   getTodayStories(@ConnectedUser() user: UserDocument) {
     return this.storiesService.getTodayStory(user);
   }

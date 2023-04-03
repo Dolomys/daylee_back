@@ -5,7 +5,7 @@ import { GetUserDto } from './utils/dto/response/get-user.dto';
 
 @Injectable()
 export class UserMapper {
-  toGetUsersLightListDto = (users: UserDocument[]) => users.map((user) => this.toGetUserLightDto(user));
+  toGetUsersLightListDto = (users: UserDocument[]): GetUserDtoLight[] => users.map((user) => this.toGetUserLightDto(user));
 
   toGetUserLightDto = (user: UserDocument): GetUserDtoLight => ({
     id: user.id,

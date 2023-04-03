@@ -1,4 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { createNotificationInterface } from 'src/notifications/utils/create-notification.interface';
+import { NotificationTypeEnum } from 'src/notifications/utils/notification-type.enum';
 import { UserDocument } from 'src/users/user.schema';
 import { PaginationOptionsDto } from 'src/utils/tools/dto/request/pagination-options.dto';
 import { PaginationDto } from 'src/utils/tools/dto/response/get-items-paginated.dto';
@@ -16,6 +19,7 @@ export class CommentService {
     private readonly commentRepository: CommentRepository,
     private readonly commentMapper: CommentMapper,
     private readonly articleRepository: ArticleRepository,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async addComment(
@@ -30,6 +34,12 @@ export class CommentService {
     };
     const result = await this.commentRepository.addComment(newComment);
     await this.articleRepository.updateCommentsCount(article, 1);
+    const notification: createNotificationInterface = {
+      notificationType: NotificationTypeEnum.COMMENT,
+      article: article,
+      sender: user
+    }
+    await this.notificationsService.createNotification(notification)
     return this.commentMapper.toGetCommentDto(result);
   }
 

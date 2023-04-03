@@ -28,7 +28,7 @@ export class FollowService {
     const isFollowing = await this.followRepository.isFollowing(follower, following.id);
     if (isFollowing) throw new UnauthorizedException('ALREADY_FOLLOWING');
     await this.userRepository.addFollowCount(follower, following);
-    return this.followRepository.followUserOrThrow(follower, following);
+    this.followRepository.followUserOrThrow(follower, following);
   }
 
   removeFollower = (user: UserDocument, following: UserDocument) =>
