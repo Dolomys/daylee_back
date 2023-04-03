@@ -22,11 +22,7 @@ export class CommentService {
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  async addComment(
-    user: UserDocument,
-    createCommentaryDto: CreateCommentaryDto,
-    article: ArticleDocument,
-  ) {
+  async addComment(user: UserDocument, createCommentaryDto: CreateCommentaryDto, article: ArticleDocument) {
     const newComment = {
       ...createCommentaryDto,
       owner: user,
@@ -37,9 +33,9 @@ export class CommentService {
     const notification: createNotificationInterface = {
       notificationType: NotificationTypeEnum.COMMENT,
       article: article,
-      sender: user
-    }
-    await this.notificationsService.createNotification(notification)
+      sender: user,
+    };
+    await this.notificationsService.createNotification(notification);
     return this.commentMapper.toGetCommentDto(result);
   }
 
@@ -53,7 +49,7 @@ export class CommentService {
       .findCommentsResponse(comment)
       .then((commentList) => commentList.map((comment) => this.commentMapper.toGetCommentDto(comment)));
 
-  async removeComment(user: UserDocument,comment: CommentDocument) {
+  async removeComment(user: UserDocument, comment: CommentDocument) {
     const isOwner = comment.owner == user;
     if (!isOwner) throw new UnauthorizedException('NOT_OWNER');
     await this.articleRepository.updateCommentsCount(comment.article, -1);

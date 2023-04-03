@@ -17,7 +17,9 @@ export class StoriesRepository {
 
   create = (story: CreateStoryType) => this.storyModel.create(story);
 
-  findOne = (storyId: Types.ObjectId) => this.storyModel.findById(storyId).populate('owner').then(this.orThrow);
+  findOne = (storyId: Types.ObjectId) => this.storyModel.findById(storyId).populate('owner').exec().then(this.orThrow);
+
+  findByUser = (user: UserDocument) => this.storyModel.find({owner: user}).populate('owner').exec().then(this.orThrow)
 
   findFollowing = (following: UserDocument[]) => {
     const date24HoursAgo = subHours(new Date(), 24);

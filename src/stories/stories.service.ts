@@ -1,5 +1,4 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { Types } from 'mongoose';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { FollowRepository } from 'src/follow/follow.repository';
 import { UserDocument } from 'src/users/user.schema';
@@ -22,18 +21,18 @@ export class StoriesService {
       .then((story) => this.storiesMapper.toGetStoryDto(story));
   }
 
-  async getTodayStory(user: UserDocument) {
+  async getTodayUserWithStories(user: UserDocument) {
     const followingUsers = await this.followRepository.getUserFollowingsByIdOrThrow(user.id);
     const formatedArray = followingUsers.map((item) => item.following);
     return this.storiesRepository
       .findFollowing(formatedArray)
-      .then((stories) => this.storiesMapper.toGetStoryLightListDto(stories));
+      .then((stories) => this.storiesMapper.toGetStoryUserSet(stories));
   }
 
-  async getStoryById(user: UserDocument, storyId: Types.ObjectId) {
-    const story = await this.storiesRepository.findOne(storyId);
-    const isFollower = this.followRepository.isFollowing(user, story.owner.id);
+  async getUserStories(user: UserDocument, storyOwner: UserDocument) {
+    const story = await this.storiesRepository.findByUser(storyOwner);
+    const isFollower = this.followRepository.isFollowing(user, storyOwner.id);
     if (!isFollower) throw new UnauthorizedException('NOT_FOLLOWING_USER');
-    return this.storiesMapper.toGetStoryDto(story);
+    return this.storiesMapper.toGetStoriesDtos(story);
   }
 }

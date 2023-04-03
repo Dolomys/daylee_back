@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, ParseFilePipe, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { Types } from 'mongoose';
 import { UserDocument } from 'src/users/user.schema';
+import { UserByIdPipe } from 'src/users/utils/user.pipe';
 import { Protect } from 'src/utils/decorator/auth.decorator';
 import { ConnectedUser } from 'src/utils/decorator/customAuth.decorator';
 import { CustomFilesTypeValidator } from 'src/utils/validator/file.validator';
@@ -40,15 +40,15 @@ export class StoriesController {
   @ApiOperation({ summary: 'Get Following Stories' })
   @ApiOkResponse({ description: 'SUCCESS', type: [GetStoryLightDto] })
   getTodayStories(@ConnectedUser() user: UserDocument) {
-    return this.storiesService.getTodayStory(user);
+    return this.storiesService.getTodayUserWithStories(user);
   }
 
   @Protect()
-  @Get(':storyId')
-  @ApiParam({ name: 'storyId', type: String })
-  @ApiOperation({ summary: 'Get Single Story' })
+  @Get(':ownerId')
+  @ApiParam({ name: 'ownerId', type: String })
+  @ApiOperation({ summary: 'Get User Stories' })
   @ApiOkResponse({ description: 'SUCCESS', type: GetStoryDto })
-  getStory(@ConnectedUser() user: UserDocument, @Param('storyId') storyId: Types.ObjectId) {
-    return this.storiesService.getStoryById(user, storyId);
+  getStory(@ConnectedUser() user: UserDocument, @Param('ownerId', UserByIdPipe) storyOwner: UserDocument) {
+    return this.storiesService.getUserStories(user,storyOwner);
   }
 }

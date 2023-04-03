@@ -19,21 +19,21 @@ export class CommentRepository {
 
   addComment = (comment: any) => this.commentModel.create(comment);
 
-  isOwner(user: UserDocument, comment: CommentDocument) {
+  isOwner = (user: UserDocument, comment: CommentDocument) => {
     comment.owner = user;
-  }
+  };
 
   findCommentById = (commentId: string) =>
     this.commentModel.findOne({ _id: commentId }).populate('owner').exec().then(this.orThrow);
 
-  async findCommentsByArticle(article: Article, paginationOptionsDto: PaginationOptionsDto) {
+  findCommentsByArticle = async (article: Article, paginationOptionsDto: PaginationOptionsDto) => {
     const options = {
       page: paginationOptionsDto.page ?? 1,
       limit: PAGINATE_QUERY_LIMIT,
       populate: 'owner',
     };
     return await this.commentModel.paginate({ article: article }, options);
-  }
+  };
 
   countCommentsByArticle = (article: Article) => this.commentModel.find({ article: article }).count().exec();
 
