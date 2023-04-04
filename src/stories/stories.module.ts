@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { NestjsFormDataModule } from 'nestjs-form-data';
 import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 import { FollowModule } from 'src/follow/follow.module';
 import { UsersModule } from 'src/users/users.module';
@@ -11,6 +12,7 @@ import { Story, StorySchema } from './story.schema';
 
 @Module({
   imports: [
+    NestjsFormDataModule,
     CloudinaryModule,
     forwardRef(() => UsersModule),
     forwardRef(() => FollowModule),

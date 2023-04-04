@@ -9,10 +9,13 @@ export type StoryDocument = HydratedDocument<Story>;
 })
 export class Story extends Document {
   @Prop({ required: true })
-  filesUrls: string[];
+  fileUrl: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   owner: UserDocument;
+
+  @Prop({type: Date}) 
+  createdAt?: Date
 }
 
 export const StorySchema = SchemaFactory.createForClass(Story);

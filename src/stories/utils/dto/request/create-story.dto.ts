@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { HasMimeType, IsFile, MemoryStoredFile } from 'nestjs-form-data';
 
 export class CreateStoryDto {
-  @ApiProperty({
-    type: 'file',
-    isArray: true,
-    description: 'An array of files (images and videos)',
-  })
-  files: Express.Multer.File[];
+  @ApiProperty({ type: 'file' })
+  @IsFile()
+  @HasMimeType(['image/jpeg', 'image/png', 'video/mp4'])
+  file: MemoryStoredFile;
 }

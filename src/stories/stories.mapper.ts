@@ -10,7 +10,8 @@ export class StoriesMapper {
   toGetStoriesDtos = (stories: StoryDocument[]) => stories.map((story) => this.toGetStoryDto(story));
 
   toGetStoryDto = (story: StoryDocument): GetStoryDto => ({
-    filesUrl: story.filesUrls,
+    fileUrl: story.fileUrl,
+    createdAt: story.createdAt
   });
 
   toGetStoryUserSet = (stories: StoryDocument[]) => {

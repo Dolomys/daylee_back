@@ -2,5 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class GetStoryDto {
   @ApiProperty()
-  filesUrl: string[];
+  fileUrl: string;
+  
+  @ApiProperty({type: Date})
+  createdAt?: Date
 }

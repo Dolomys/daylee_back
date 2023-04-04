@@ -1,11 +1,10 @@
-import { Body, Controller, Get, Param, ParseFilePipe, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiConsumes, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { FormDataRequest } from 'nestjs-form-data';
 import { UserDocument } from 'src/users/user.schema';
 import { UserByIdPipe } from 'src/users/utils/user.pipe';
 import { Protect } from 'src/utils/decorator/auth.decorator';
 import { ConnectedUser } from 'src/utils/decorator/customAuth.decorator';
-import { CustomFilesTypeValidator } from 'src/utils/validator/file.validator';
 import { StoriesService } from './stories.service';
 import { CreateStoryDto } from './utils/dto/request/create-story.dto';
 import { GetStoryLightDto } from './utils/dto/response/get-stories-light.dto';
@@ -18,21 +17,16 @@ export class StoriesController {
 
   @Protect()
   @Post()
-  @UseInterceptors(FilesInterceptor('files'))
+  @FormDataRequest()
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Create Story' })
   @ApiOkResponse({ description: 'SUCCESS', type: GetStoryDto })
   create(
     @ConnectedUser() user: UserDocument,
-    @UploadedFiles(
-      new ParseFilePipe({
-        validators: [new CustomFilesTypeValidator({})],
-      }),
+    @Body() createStoryDto: CreateStoryDto
     )
-    files: Express.Multer.File[],
-    @Body() createStoryDto: CreateStoryDto,
-  ) {
-    return this.storiesService.createStory(user, files);
+  {
+    return this.storiesService.createStory(user, createStoryDto);
   }
 
   @Protect()
@@ -47,7 +41,7 @@ export class StoriesController {
   @Get(':ownerId')
   @ApiParam({ name: 'ownerId', type: String })
   @ApiOperation({ summary: 'Get User Stories' })
-  @ApiOkResponse({ description: 'SUCCESS', type: GetStoryDto })
+  @ApiOkResponse({ description: 'SUCCESS', type: [GetStoryDto] })
   getStory(@ConnectedUser() user: UserDocument, @Param('ownerId', UserByIdPipe) storyOwner: UserDocument) {
     return this.storiesService.getUserStories(user,storyOwner);
   }
