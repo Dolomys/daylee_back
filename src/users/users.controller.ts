@@ -5,6 +5,7 @@ import { FormDataRequest } from 'nestjs-form-data';
 import { Protect } from 'src/utils/decorator/auth.decorator';
 import { ConnectedUser } from 'src/utils/decorator/customAuth.decorator';
 import { ApiPaginatedDto } from 'src/utils/tools/dto/api-pagined-dto.decorator';
+import { UserMapper } from './user.mapper';
 import { UserDocument } from './user.schema';
 import { UsersService } from './users.service';
 import { FilterAndPaginateDto } from './utils/dto/request/filter-user.dto';
@@ -16,7 +17,7 @@ import { UserByIdPipe } from './utils/user.pipe';
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService, private readonly userMapper: UserMapper) {}
 
   @Protect()
   @Get()
@@ -31,7 +32,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Get User By ID' })
   @ApiOkResponse({ description: 'SUCCESS', type: GetUserDto })
   getUser(@Param('userId', UserByIdPipe) user: UserDocument) {
-    return this.usersService.getUser(user);
+    return this.userMapper.toGetUserDto(user);
   }
 
   @Protect()

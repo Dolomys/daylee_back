@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PaginateResult } from 'mongoose';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { FollowRepository } from 'src/follow/follow.repository';
@@ -60,9 +60,11 @@ export class ArticleService {
     return new PaginationDto(await this.articleMapper.toGetArticleListLightDto(articlesWithHasLiked), articles);
   }
 
-  async getUserFeed(user: UserDocument, paginationOptionsDto: PaginationOptionsDto) {
-    const articles = await this.articleRepository.findArticleFeedPaginate(user, paginationOptionsDto);
-    const articlesWithHasLiked = await this.articlesWithHasLiked(articles, user);
+  async getUserFeed(user: UserDocument, feedOwner: UserDocument, paginationOptionsDto: PaginationOptionsDto) {
+    const isFollowing = await this.followRepository.isFollowing(user, feedOwner.id);
+    if (user.id !== feedOwner.id && !isFollowing) throw new UnauthorizedException('NOT_FOLLOWING');
+    const articles = await this.articleRepository.findArticleFeedPaginate(feedOwner, paginationOptionsDto);
+    const articlesWithHasLiked = await this.articlesWithHasLiked(articles, feedOwner);
     return new PaginationDto(await this.articleMapper.toGetArticleListLightDto(articlesWithHasLiked), articles);
   }
 

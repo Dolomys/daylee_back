@@ -35,7 +35,6 @@ export class PaginationDto<T> {
     this.meta.page = queryMeta.page ?? 0;
     this.meta.take = queryMeta.limit;
     this.meta.itemCount = queryMeta.totalDocs;
-    this.meta.pageCount = queryMeta.pagingCounter;
     this.meta.hasPreviousPage = queryMeta.hasPrevPage;
     this.meta.hasNextPage = queryMeta.hasNextPage;
   }

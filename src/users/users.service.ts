@@ -15,9 +15,6 @@ export class UsersService {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  getUser = (user: UserDocument) =>
-    this.userRepository.findOneById(user._id).then((user) => this.userMapper.toGetUserDto(user));
-
   async getPaginatedUsersWithFilter(filterAndPaginateDto: FilterAndPaginateDto) {
     const users = await this.userRepository.findManyWithFilter(filterAndPaginateDto);
     return new PaginationDto(this.userMapper.toGetUsersLightListDto(users.docs), users);

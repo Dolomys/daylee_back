@@ -30,7 +30,7 @@ export class ChatRepository {
 
   saveChat = (chat: Chat) => this.chatModel.create(chat);
 
-  saveRoom = (roomChat: ChatRoom) => this.chatRoomModel.create(roomChat);
+  saveRoom = (roomChat: any) => this.chatRoomModel.create(roomChat);
 
   getRoomMessages = (roomChatId: string) =>
     this.chatModel.find({ room: roomChatId }).sort({ createdAt: -1 }).populate('sender').exec().then(this.orThrow);

@@ -19,8 +19,8 @@ export class Chat {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   sender: UserDocument;
 
-  @Prop({type: Date}) 
-  createdAt?: Date
+  @Prop({ type: Date })
+  createdAt?: Date;
 }
 
 @Schema({
@@ -37,8 +37,8 @@ export class ChatRoom {
   @Prop({ type: Array })
   participantsLastSeen?: LastTimeUserLeftInterface[];
 
-  @Prop({type: Date}) 
-  createdAt?: Date
+  @Prop({ type: Date })
+  createdAt: Date;
 }
 
 export const ChatSchema = SchemaFactory.createForClass(Chat);

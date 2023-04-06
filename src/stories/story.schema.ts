@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document, HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { UserDocument } from 'src/users/user.schema';
 
 export type StoryDocument = HydratedDocument<Story>;
@@ -7,7 +7,7 @@ export type StoryDocument = HydratedDocument<Story>;
 @Schema({
   timestamps: true,
 })
-export class Story extends Document {
+export class Story {
   @Prop({ required: true })
   fileUrl: string;
 
@@ -15,7 +15,7 @@ export class Story extends Document {
   owner: UserDocument;
 
   @Prop({type: Date}) 
-  createdAt?: Date
+  createdAt: Date
 }
 
 export const StorySchema = SchemaFactory.createForClass(Story);

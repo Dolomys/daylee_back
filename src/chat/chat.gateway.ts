@@ -21,21 +21,16 @@ export class ChatGateway implements NestGateway {
   afterInit(server: any) {}
 
   handleConnection(client: SocketWithAuth, ...args: any[]) {
-    console.log(`Client connected: ${client.id}`);
     client.on('disconnecting', (reason) => {
-      console.log(`DISCONNECTING: ${Array.from(client.rooms)}`);
-      const room = Array.from(client.rooms)
-      this.chatService.addOrUpdateLastLeaveTime(room[1],client)
+      const room = Array.from(client.rooms);
+      this.chatService.addOrUpdateLastLeaveTime(room[1], client);
     });
   }
 
-  handleDisconnect(client: SocketWithAuth) {
-    console.log(client.rooms)
-  }
+  handleDisconnect(client: SocketWithAuth) {}
 
   @SubscribeMessage('create')
   async handleCreateRoom(@ConnectedSocket() client: SocketWithAuth, @MessageBody() createRoomDto: CreateRoomDto) {
-    console.log("hi")
     this.chatService.createRoom(client, createRoomDto);
   }
 

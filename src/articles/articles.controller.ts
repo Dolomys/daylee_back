@@ -56,14 +56,18 @@ export class ArticleController {
   ) {
     return this.articleService.createArticle(images, createArticleDto.description, user);
   }
-  
+
   @Protect()
   @Get('feed/:userId')
   @ApiParam({ name: 'userId', type: String })
   @ApiOperation({ summary: 'Get User Feed Articles Paginated' })
   @ApiPaginatedDto(GetArticleLightDto)
-  getUserFeedPaginated(@Param('userId', UserByIdPipe) user: UserDocument, @Query() paginationOptionsDto: PaginationOptionsDto) {
-    return this.articleService.getUserFeed(user, paginationOptionsDto);
+  getUserFeedPaginated(
+    @ConnectedUser() user: UserDocument,
+    @Param('userId', UserByIdPipe) feedOwner: UserDocument,
+    @Query() paginationOptionsDto: PaginationOptionsDto,
+  ) {
+    return this.articleService.getUserFeed(user, feedOwner, paginationOptionsDto);
   }
 
   @Get('single/:articleId')
