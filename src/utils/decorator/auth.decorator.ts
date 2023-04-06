@@ -16,7 +16,7 @@ export function ProtectOwner() {
   return applyDecorators(
     UseGuards(JwtAuthGuard, ArticleOwnerGuard),
     ApiBearerAuth(),
-    ApiForbiddenResponse({ description: 'FORBIDDEN' }),
+    ApiForbiddenResponse({ description: 'NOT_OWNER' }),
   );
 }
 
@@ -24,6 +24,6 @@ export function ProtectFollow() {
   return applyDecorators(
     UseGuards(JwtAuthGuard, FollowOwnerGuard),
     ApiBearerAuth(),
-    ApiForbiddenResponse({ description: 'FORBIDDEN' }),
+    ApiForbiddenResponse({ description: 'NOT_FOLLOWING' }),
   );
 }
