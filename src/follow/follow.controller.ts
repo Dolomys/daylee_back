@@ -1,7 +1,14 @@
 import { Controller } from '@nestjs/common/decorators/core/controller.decorator';
 import { Delete, Get, Post } from '@nestjs/common/decorators/http/request-mapping.decorator';
 import { Param } from '@nestjs/common/decorators/http/route-params.decorator';
-import { ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { UserDocument } from 'src/users/user.schema';
 import { GetUserDtoLight } from 'src/users/utils/dto/response/get-user-light.dto';
 import { UserByIdPipe } from 'src/users/utils/user.pipe';
@@ -35,6 +42,7 @@ export class FollowController {
   @ApiParam({ name: 'userId', type: String })
   @ApiOperation({ summary: 'Follow user by ID' })
   @ApiNoContentResponse({ description: 'SUCCESS' })
+  @ApiUnauthorizedResponse({ description: 'FOLLOWING_LIMIT_REACHED, CANNOT_FOLLOW_YOURSELF, ALREADY_FOLLOWING' })
   followUser(@ConnectedUser() user: UserDocument, @Param('userId', UserByIdPipe) userToFollow: UserDocument) {
     this.followService.followUser(user, userToFollow);
   }

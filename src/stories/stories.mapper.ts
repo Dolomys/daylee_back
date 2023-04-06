@@ -11,7 +11,7 @@ export class StoriesMapper {
 
   toGetStoryDto = (story: StoryDocument): GetStoryDto => ({
     fileUrl: story.fileUrl,
-    createdAt: story.createdAt
+    createdAt: story.createdAt,
   });
 
   toGetStoryUserSet = (stories: StoryDocument[]) => {

@@ -11,9 +11,9 @@ export class Notification extends Document {
   @Prop({ enum: NotificationTypeEnum, required: true })
   notificationType: NotificationTypeEnum;
 
-  @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Article', required: true})
-  article: ArticleDocument
-  
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Article', required: true })
+  article: ArticleDocument;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   sender: UserDocument;
 
@@ -22,4 +22,3 @@ export class Notification extends Document {
 }
 
 export const NotificationSchema = SchemaFactory.createForClass(Notification);
-

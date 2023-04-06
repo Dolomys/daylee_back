@@ -29,7 +29,7 @@ import { validateEnv } from './utils/config/configuration';
     FollowModule,
     ChatModule,
     StoryModule,
-    LikesModule
+    LikesModule,
   ],
 })
 export class AppModule {}

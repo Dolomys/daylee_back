@@ -13,7 +13,7 @@ import { ChatService } from './chat.service';
   imports: [
     MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }]),
     MongooseModule.forFeature([{ name: ChatRoom.name, schema: ChatRoomSchema }]),
-    forwardRef(()=> UsersModule)
+    forwardRef(() => UsersModule),
   ],
   providers: [ChatGateway, ChatRepository, ChatService, ChatMapper],
   controllers: [ChatController],

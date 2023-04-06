@@ -53,6 +53,6 @@ export class CommentService {
     const isOwner = comment.owner == user;
     if (!isOwner) throw new UnauthorizedException('NOT_OWNER');
     await this.articleRepository.updateCommentsCount(comment.article, -1);
-    return await this.commentRepository.deleteComment(comment);
+    await this.commentRepository.deleteComment(comment);
   }
 }

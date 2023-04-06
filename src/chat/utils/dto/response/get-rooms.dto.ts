@@ -5,7 +5,7 @@ export class GetRoomDto {
   @ApiProperty()
   roomId: string;
 
-  @ApiProperty({type: [GetUserDtoLight]})
+  @ApiProperty({ type: [GetUserDtoLight] })
   participants: GetUserDtoLight[];
 
   @ApiProperty()

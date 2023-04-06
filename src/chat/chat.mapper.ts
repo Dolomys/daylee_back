@@ -17,20 +17,20 @@ export class ChatMapper {
     content: chatDocument.message,
   });
 
-  toGetRoomsDto = (rooms: ChatRoomDocument[], user:UserDocument) => Promise.all(rooms.map(room => this.toGetRoomDto(room, user)))
+  toGetRoomsDto = (rooms: ChatRoomDocument[], user: UserDocument) =>
+    Promise.all(rooms.map((room) => this.toGetRoomDto(room, user)));
 
-  async toGetRoomDto(room: ChatRoomDocument, user: UserDocument):Promise<GetRoomDto>{
-    const lastSeenMessage = await this.chatRepository.getLastRoomMessage(room.id)
-    const participantLastSeen = room.participantsLastSeen?.find(x => x.userId = user.id)
-    let hasSeenLastMessage: boolean = true
-    if(lastSeenMessage.createdAt && participantLastSeen) {
-      if(lastSeenMessage.createdAt > participantLastSeen?.lastDisconnect)
-        hasSeenLastMessage = false
+  async toGetRoomDto(room: ChatRoomDocument, user: UserDocument): Promise<GetRoomDto> {
+    const lastSeenMessage = await this.chatRepository.getLastRoomMessage(room.id);
+    const participantLastSeen = room.participantsLastSeen?.find((x) => (x.userId = user.id));
+    let hasSeenLastMessage: boolean = true;
+    if (lastSeenMessage.createdAt && participantLastSeen) {
+      if (lastSeenMessage.createdAt > participantLastSeen?.lastDisconnect) hasSeenLastMessage = false;
     }
     return {
       roomId: room.id,
       participants: this.userMapper.toGetUsersLightListDto(room.participants),
-      hasSeenLastMessage: hasSeenLastMessage
-    }
+      hasSeenLastMessage: hasSeenLastMessage,
+    };
   }
 }

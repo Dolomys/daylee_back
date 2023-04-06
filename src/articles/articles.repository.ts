@@ -58,13 +58,13 @@ export class ArticleRepository {
   delete = (articleFilterQuery: FilterQuery<Article>) =>
     this.articleModel.findOneAndRemove(articleFilterQuery).exec().then(this.orThrow);
 
-    async updateLikesCount(article: ArticleDocument, countChange: number): Promise<ArticleDocument> {
-      article.likeCount += countChange;
-      return await article.save();
-    }
+  async updateLikesCount(article: ArticleDocument, countChange: number): Promise<ArticleDocument> {
+    article.likeCount += countChange;
+    return await article.save();
+  }
 
-    async updateCommentsCount(article: ArticleDocument, countChange: number): Promise<ArticleDocument> {
-      article.commentCount += countChange;
-      return await article.save();
-    }
+  async updateCommentsCount(article: ArticleDocument, countChange: number): Promise<ArticleDocument> {
+    article.commentCount += countChange;
+    return await article.save();
+  }
 }

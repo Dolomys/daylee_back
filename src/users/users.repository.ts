@@ -25,7 +25,9 @@ export class UsersRepository {
       page: filterAndPaginateDto.page ?? 1,
       limit: PAGINATE_QUERY_LIMIT,
     };
-    const filter = filterAndPaginateDto.query ? { username: { $regex: filterAndPaginateDto.query, $options: 'i' } } : {};
+    const filter = filterAndPaginateDto.query
+      ? { username: { $regex: filterAndPaginateDto.query, $options: 'i' } }
+      : {};
     return await this.userModel.paginate(filter, options);
   }
 

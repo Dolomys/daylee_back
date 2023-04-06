@@ -14,14 +14,9 @@ export class MongoDBEnvConfig {
   URL: string;
 }
 
-export class CloudinaryEnvConfig {
+export class CloudinaryEnvConfig {}
 
-}
-
-export class JwtEnvConfig {
-
-}
-
+export class JwtEnvConfig {}
 
 export class EnvironmentVariables {
   @IsNumber()
@@ -51,7 +46,7 @@ export function validateEnv(config: Record<string, unknown>) {
     fileExistsSync(YAML_CONFIG_FILENAME) &&
     (yaml.load(readFileSync(YAML_CONFIG_FILENAME, 'utf8')) as Record<string, unknown>);
 
-  const validatedConfig = plainToInstance(EnvironmentVariables, object({ ...config, ...yamlConfig,...process.env }), {
+  const validatedConfig = plainToInstance(EnvironmentVariables, object({ ...config, ...yamlConfig, ...process.env }), {
     enableImplicitConversion: true,
   });
   const errors = validateSync(validatedConfig, { skipMissingProperties: false, whitelist: true });

@@ -1,4 +1,4 @@
 export enum NotificationTypeEnum {
-    COMMENT = 'COMMENT',
-    LIKE = 'LIKE'
+  COMMENT = 'COMMENT',
+  LIKE = 'LIKE',
 }

@@ -1,6 +1,6 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
 export interface LastTimeUserLeftInterface {
-    userId: Types.ObjectId,
-    lastDisconnect: Date
+  userId: Types.ObjectId;
+  lastDisconnect: Date;
 }

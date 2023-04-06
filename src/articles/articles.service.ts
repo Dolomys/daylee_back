@@ -10,7 +10,6 @@ import { ArticleDocumentHasLiked } from 'src/utils/types';
 import { ArticleMapper } from './article.mapper';
 import { ArticleDocument } from './article.schema';
 import { ArticleRepository } from './articles.repository';
-import { GetArticleDto } from './dto/response/get-article.dto';
 
 @Injectable()
 export class ArticleService {
@@ -26,8 +25,6 @@ export class ArticleService {
     const article = await this.getArticleById(articleId);
     return article.owner.id === user.id;
   }
-
-  getArticleFull = (article: ArticleDocument): Promise<GetArticleDto> => this.articleMapper.toGetArticleDto(article);
 
   getArticleById = (articleId: string): Promise<ArticleDocument> => this.articleRepository.findOneById(articleId);
 

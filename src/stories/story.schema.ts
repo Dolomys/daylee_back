@@ -14,8 +14,8 @@ export class Story {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   owner: UserDocument;
 
-  @Prop({type: Date}) 
-  createdAt: Date
+  @Prop({ type: Date })
+  createdAt: Date;
 }
 
 export const StorySchema = SchemaFactory.createForClass(Story);

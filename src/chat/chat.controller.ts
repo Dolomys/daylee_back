@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiParam, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { UserDocument } from 'src/users/user.schema';
 import { Protect } from 'src/utils/decorator/auth.decorator';
 import { ConnectedUser } from 'src/utils/decorator/customAuth.decorator';
@@ -23,6 +23,7 @@ export class ChatController {
   @ApiParam({ name: 'roomId', type: String })
   @ApiOperation({ summary: 'Get All Messages From Room' })
   @ApiOkResponse({ description: 'SUCCESS' })
+  @ApiUnauthorizedResponse({ description: 'NOT_IN_ROOM' })
   getRoomMessagesPaginated(@ConnectedUser() user: UserDocument, @Param('roomId') roomId: string) {
     return this.chatService.getRoomMessages(roomId, user);
   }

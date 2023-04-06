@@ -12,8 +12,8 @@ import { LikesService } from './likes.service';
   imports: [
     MongooseModule.forFeature([{ name: Like.name, schema: LikesSchema }]),
     NotificationsModule,
-    forwardRef(()=> UsersModule),
-    forwardRef(()=> ArticleModule),
+    forwardRef(() => UsersModule),
+    forwardRef(() => ArticleModule),
   ],
   providers: [LikesService, LikesRepository],
   exports: [LikesService, LikesRepository],

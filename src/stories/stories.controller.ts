@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiConsumes, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiOkResponse, ApiOperation, ApiParam, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { FormDataRequest } from 'nestjs-form-data';
 import { UserDocument } from 'src/users/user.schema';
 import { UserByIdPipe } from 'src/users/utils/user.pipe';
@@ -21,11 +21,7 @@ export class StoriesController {
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Create Story' })
   @ApiOkResponse({ description: 'SUCCESS', type: GetStoryDto })
-  create(
-    @ConnectedUser() user: UserDocument,
-    @Body() createStoryDto: CreateStoryDto
-    )
-  {
+  create(@ConnectedUser() user: UserDocument, @Body() createStoryDto: CreateStoryDto) {
     return this.storiesService.createStory(user, createStoryDto);
   }
 
@@ -42,7 +38,8 @@ export class StoriesController {
   @ApiParam({ name: 'ownerId', type: String })
   @ApiOperation({ summary: 'Get User Stories' })
   @ApiOkResponse({ description: 'SUCCESS', type: [GetStoryDto] })
+  @ApiUnauthorizedResponse({ description: 'NOT_FOLLOWING_USER' })
   getStory(@ConnectedUser() user: UserDocument, @Param('ownerId', UserByIdPipe) storyOwner: UserDocument) {
-    return this.storiesService.getUserStories(user,storyOwner);
+    return this.storiesService.getUserStories(user, storyOwner);
   }
 }
