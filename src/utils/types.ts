@@ -10,6 +10,7 @@ export type PayloadType = {
 
 export type CreateStoryType = {
   fileUrl: string;
+  fileId: string;
   owner: UserDocument;
 };
 

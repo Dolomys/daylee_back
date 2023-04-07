@@ -47,5 +47,16 @@ export class StoriesRepository {
       .then(this.orThrow);
   };
 
+  findOldStories = () =>
+    this.storyModel
+      .find({
+        createdAt: {
+          $lt: DATE_24_HOURS_AGO,
+        },
+      })
+      .exec();
+
+  deleteMany = (stories: StoryDocument[]) => Promise.all(stories.map((story) => this.delete(story)));
+
   delete = (story: StoryDocument) => this.storyModel.deleteOne({ id: story.id }).then(this.orThrow);
 }

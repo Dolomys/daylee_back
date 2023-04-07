@@ -8,7 +8,7 @@ export const importDynamic = new Function('modulePath', 'return import(modulePat
 
 @Injectable()
 export class CloudinaryService {
-  uploadFileAndGetUrl = (file: MemoryStoredFile) => this.uploadFile(file).then((data) => data.secure_url);
+  uploadFileAndGetUrl = (file: MemoryStoredFile) => this.uploadFile(file).then((data) => data);
 
   uploadManyFilesAndGetUrl = (files: Express.Multer.File[]) =>
     Promise.all(files.map((file) => this.uploadFile(file).then((data) => data.secure_url)));
@@ -24,6 +24,17 @@ export class CloudinaryService {
         if (result) resolve(result);
       });
       toStream(file.buffer).pipe(upload);
+    });
+  }
+
+  deleteFiles = (filesId: string[]) => Promise.all(filesId.map(file => this.deleteFile(file)))
+
+  async deleteFile(fileId: string) {
+    return new Promise((resolve, reject) => {
+      v2.uploader.destroy(fileId, (error, result) => {
+        if (error) reject(error);
+        if (result) resolve(result);
+      });
     });
   }
 }

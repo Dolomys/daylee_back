@@ -11,6 +11,9 @@ export class Story {
   @Prop({ required: true })
   fileUrl: string;
 
+  @Prop({ required: true })
+  fileId: string;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   owner: UserDocument;
 

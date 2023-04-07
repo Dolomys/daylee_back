@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { PaginationDto } from 'src/utils/tools/dto/response/get-items-paginated.dto';
 import { UserMapper } from './user.mapper';
@@ -21,13 +21,19 @@ export class UsersService {
   }
 
   async updateUser(user: UserDocument, updateUserDto: UpdateUserDto) {
-    let avatarUrl;
-    if (updateUserDto.image) avatarUrl = await this.cloudinaryService.uploadFileAndGetUrl(updateUserDto.image);
-
+    const imageUpload = updateUserDto.image && (await this.cloudinaryService.uploadFileAndGetUrl(updateUserDto.image));
+    if (user.avatarId)
+      try {
+        await this.cloudinaryService.deleteFile(user.avatarId);
+      } catch (err) {
+        console.log(err);
+        throw new BadRequestException('DELETE_ERROR');
+      }
     return this.userRepository
       .updateUser(user._id, {
         username: updateUserDto.username,
-        avatarUrl: avatarUrl,
+        avatarUrl: imageUpload?.secure_url,
+        avatarId: imageUpload?.public_id,
       })
       .then((user) => this.userMapper.toGetUserDto(user));
   }

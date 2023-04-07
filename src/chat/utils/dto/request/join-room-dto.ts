@@ -1,7 +1,7 @@
-import { IsMongoId, IsString } from 'class-validator';
-
+import { ApiProperty } from '@nestjs/swagger/dist/decorators';
+import { IsMongoId } from 'class-validator';
 export class JoinRoomDto {
-  @IsString()
+  @ApiProperty()
   @IsMongoId()
   roomId: string;
 }

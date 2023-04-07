@@ -1,4 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { FollowRepository } from 'src/follow/follow.repository';
 import { UserDocument } from 'src/users/user.schema';
@@ -16,9 +17,9 @@ export class StoriesService {
   ) {}
 
   async createStory(user: UserDocument, createStoryDto: CreateStoryDto) {
-    const fileUrl = await this.cloudinaryService.uploadFileAndGetUrl(createStoryDto.file);
+    const { secure_url, public_id } = await this.cloudinaryService.uploadFileAndGetUrl(createStoryDto.file);
     return this.storiesRepository
-      .create({ fileUrl: fileUrl, owner: user })
+      .create({ fileUrl: secure_url, fileId: public_id, owner: user })
       .then((story) => this.storiesMapper.toGetStoryDto(story));
   }
 
@@ -35,5 +36,19 @@ export class StoriesService {
     if (user.id !== storyOwner.id && !isFollower) throw new UnauthorizedException('NOT_FOLLOWING_USER');
     const story = await this.storiesRepository.findByUser(storyOwner);
     return this.storiesMapper.toGetStoriesDtos(story);
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async deleteStory() {
+    try {
+      const storiesToDelete = await this.storiesRepository.findOldStories();
+      if (storiesToDelete.length > 0) {
+        const storiesFiles = storiesToDelete.map(({ fileId, ...removeAttr }) => fileId);
+        await this.cloudinaryService.deleteFiles(storiesFiles);
+        await this.storiesRepository.deleteMany(storiesToDelete);
+      }
+    } catch (err) {
+      throw new Error(err.message);
+    }
   }
 }

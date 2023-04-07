@@ -22,7 +22,10 @@ export class User extends Document {
   password: string;
 
   @Prop({ default: 'https://res.cloudinary.com/dhl6bbmhb/image/upload/v1679325243/images_am6ss1.jpg' })
-  avatarUrl?: string;
+  avatarUrl: string;
+
+  @Prop()
+  avatarId?: string
 
   @Prop({ default: 0 })
   followersCount: number;

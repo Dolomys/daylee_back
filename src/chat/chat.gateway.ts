@@ -1,10 +1,13 @@
 import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { NestGateway } from '@nestjs/websockets/interfaces/nest-gateway.interface';
+import { AsyncApiPub, AsyncApiSub } from 'nestjs-asyncapi';
 import { Namespace } from 'socket.io';
+import { ErrorDto } from 'src/utils/sockets/exceptions/ws-exceptions';
 import { SocketWithAuth } from 'src/utils/types';
 import { WsCatchAllFilter } from '../utils/sockets/exceptions/ws-catch-all-filters';
 import { ChatService } from './chat.service';
+import { EventPatternChat } from './utils/const';
 import { CreateRoomDto } from './utils/dto/request/create-room.dto';
 import { JoinRoomDto } from './utils/dto/request/join-room-dto';
 import { NewMessageDto } from './utils/dto/request/new-message.dto';
@@ -20,6 +23,13 @@ export class ChatGateway implements NestGateway {
 
   afterInit(server: any) {}
 
+  @AsyncApiSub({
+    channel: EventPatternChat.listenExceptions,
+    description: 'Listen to error messages',
+    message: {
+      payload: ErrorDto,
+    },
+  })
   handleConnection(client: SocketWithAuth, ...args: any[]) {
     client.on('disconnecting', (reason) => {
       const room = Array.from(client.rooms);
@@ -29,20 +39,46 @@ export class ChatGateway implements NestGateway {
 
   handleDisconnect(client: SocketWithAuth) {}
 
-  @SubscribeMessage('create')
+  @SubscribeMessage(EventPatternChat.createRoom)
+  @AsyncApiPub({
+    channel: EventPatternChat.createRoom,
+    description: 'Create a new chat room',
+    message: {
+      payload: CreateRoomDto,
+    },
+  })
   async handleCreateRoom(@ConnectedSocket() client: SocketWithAuth, @MessageBody() createRoomDto: CreateRoomDto) {
-    this.chatService.createRoom(client, createRoomDto);
+    return this.chatService.createRoom(client, createRoomDto);
   }
 
-  @SubscribeMessage('join')
+  @SubscribeMessage(EventPatternChat.joinRoom)
+  @AsyncApiPub({
+    channel: EventPatternChat.joinRoom,
+    description: 'Join an existing chat Room',
+    message: {
+      payload: JoinRoomDto,
+    },
+  })
+  @AsyncApiSub({
+    channel: EventPatternChat.listenMessage,
+    description: 'Listen to chat messages on join',
+    message: {
+      payload: NewMessageDto,
+    },
+  })
   handleJoinRoom(@ConnectedSocket() client: SocketWithAuth, @MessageBody() joinRoomDto: JoinRoomDto) {
-    this.chatService.joinRoom(client, joinRoomDto, this.io);
+    return this.chatService.joinRoom(client, joinRoomDto, this.io);
   }
 
-  @SubscribeMessage('chat')
+  @SubscribeMessage(EventPatternChat.sendMessage)
+  @AsyncApiPub({
+    channel: EventPatternChat.sendMessage,
+    description: 'Send New message -- ONLY AFTER JOIN ROOM',
+    message: {
+      payload: NewMessageDto,
+    },
+  })
   async handleNewMessage(client: SocketWithAuth, newMessageDto: NewMessageDto) {
-    await this.chatService.createMessage(client, newMessageDto);
-    const rooms = Array.from(client.rooms);
-    client.broadcast.to(rooms[1]).emit('mesage', newMessageDto.message);
+    return this.chatService.createMessage(client, newMessageDto);
   }
 }

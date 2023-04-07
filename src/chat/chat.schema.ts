@@ -30,7 +30,6 @@ export class ChatRoom {
   @Prop({ type: Boolean })
   IsPrivate: boolean;
 
-  //TODO Rajouter limite 10 ?
   @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'User', required: true })
   participants: UserDocument[];
 

@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ScheduleModule } from '@nestjs/schedule';
+import { AsyncApiModule } from 'nestjs-asyncapi';
 import { ArticleModule } from './articles/articles.module';
 import { CommentsModule } from './articles/comments/comments.module';
 import { AuthModule } from './auth/auth.module';
@@ -11,6 +13,7 @@ import { LikesModule } from './likes/likes.module';
 import { StoryModule } from './stories/stories.module';
 import { UsersModule } from './users/users.module';
 import { validateEnv } from './utils/config/configuration';
+
 
 @Module({
   imports: [
@@ -26,10 +29,12 @@ import { validateEnv } from './utils/config/configuration';
     AuthModule,
     UsersModule,
     CloudinaryModule,
-    FollowModule,
+    FollowModule, 
     ChatModule,
     StoryModule,
     LikesModule,
+    ScheduleModule.forRoot(),
+    AsyncApiModule,
   ],
 })
 export class AppModule {}

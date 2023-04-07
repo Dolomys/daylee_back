@@ -40,7 +40,7 @@ export class ChatRepository {
 
   async isInRoom(roomChatId: string, userId: Types.ObjectId) {
     const inRoom = await this.chatRoomModel.find({ _id: roomChatId, $in: { participants: userId } }).exec();
-    return inRoom ? true : false;
+    return inRoom.length > 0 ? true : false;
   }
 
   getRoomsByUser = (userId: Types.ObjectId) =>
@@ -49,17 +49,7 @@ export class ChatRepository {
       .exec()
       .then(this.orThrow);
 
-  isParticipantFirstTimeLeaveRoom = async (roomChatId: string, userId: string) => {
-    const chatRoom = await this.chatRoomModel.findOne({ _id: roomChatId }).exec();
-
-    if (!chatRoom || !chatRoom.participantsLastSeen) {
-      throw new Error('Chat room not found');
-    }
-
-    const userIdExists = chatRoom.participantsLastSeen.some((participant) => participant.userId.toString() === userId);
-
-    return userIdExists;
-  };
+  findOneById = async (roomChatId: string) => this.chatRoomModel.findOne({ _id: roomChatId }).exec().then(this.orThrow);
 
   updateRoomTimeLeft = (roomChatId: string, lastTimeUserLeftInterface: LastTimeUserLeftInterface) =>
     this.chatRoomModel

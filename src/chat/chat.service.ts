@@ -7,7 +7,7 @@ import { UsersRepository } from 'src/users/users.repository';
 import { SocketWithAuth } from 'src/utils/types';
 import { ChatMapper } from './chat.mapper';
 import { ChatRepository } from './chat.repository';
-import { Chat } from './chat.schema';
+import { EventPatternChat } from './utils/const';
 import { CreateRoomDto } from './utils/dto/request/create-room.dto';
 import { JoinRoomDto } from './utils/dto/request/join-room-dto';
 import { NewMessageDto } from './utils/dto/request/new-message.dto';
@@ -24,7 +24,7 @@ export class ChatService {
 
   async joinRoom(client: SocketWithAuth, joinRoomDto: JoinRoomDto, io: Namespace) {
     const isInRoom = await this.chatRepository.isInRoom(joinRoomDto.roomId, client.id);
-    if (!isInRoom) throw new UnauthorizedException('NOT_IN_ROOM');
+    if (!isInRoom) throw new BadRequestException('WRONG_ROOM');
     client.join(joinRoomDto.roomId);
     io.to(joinRoomDto.roomId).emit('message', `${client.username} has joined room ${joinRoomDto.roomId}`);
   }
@@ -32,7 +32,7 @@ export class ChatService {
   async createRoom(client: SocketWithAuth, createRoomDto: CreateRoomDto) {
     const participants = await this.usersRepository.findManyById(createRoomDto.participantsId);
     const doesChatExist = await this.chatRepository.chatRoomContainsAllUsers(participants);
-    if (doesChatExist) throw new BadRequestException('THIS ROOM ALREADY EXIST');
+    if (doesChatExist) return new BadRequestException('THIS ROOM ALREADY EXIST');
     const newRoom = await this.chatRepository.saveRoom({
       IsPrivate: createRoomDto.isPrivate,
       participants: participants,
@@ -42,12 +42,15 @@ export class ChatService {
   }
 
   async createMessage(client: SocketWithAuth, newMessageDto: NewMessageDto) {
-    const chat: Chat = {
+    const isInRoom = await this.chatRepository.isInRoom(newMessageDto.roomId, client.id);
+    if (!isInRoom) throw new BadRequestException('WRONG_ROOM');
+    const message = await this.chatRepository.saveChat({
       roomId: new mongoose.Types.ObjectId(newMessageDto.roomId),
       message: newMessageDto.message,
       sender: await this.usersRepository.findOneById(client.id),
-    };
-    this.chatRepository.saveChat(chat);
+    });
+    const rooms = Array.from(client.rooms);
+    client.broadcast.to(rooms[1]).emit(EventPatternChat.listenMessage, this.chatMapper.toGetMessageDto(message));
   }
 
   async getUsersRooms(user: UserDocument): Promise<GetRoomDto[]> {
@@ -62,9 +65,18 @@ export class ChatService {
   }
 
   async addOrUpdateLastLeaveTime(roomId: string, client: SocketWithAuth) {
-    const hasAlreadyLeftTime = await this.chatRepository.isParticipantFirstTimeLeaveRoom(roomId, client.id);
+    const chatRoom = await this.chatRepository.findOneById(roomId);
+
+    if (!chatRoom || !chatRoom.participantsLastSeen) {
+      throw new Error('Chat room not found');
+    }
+
+    const hasAlreadyLeftOnce = chatRoom.participantsLastSeen.some(
+      (participant) => participant.userId.toString() === client.id,
+    );
+
     const lastTimeUserLeft: LastTimeUserLeftInterface = { userId: client.id, lastDisconnect: new Date(Date.now()) };
-    if (!hasAlreadyLeftTime) await this.chatRepository.addRoomTimeLeft(roomId, lastTimeUserLeft);
+    if (!hasAlreadyLeftOnce) await this.chatRepository.addRoomTimeLeft(roomId, lastTimeUserLeft);
     else await this.chatRepository.updateRoomTimeLeft(roomId, lastTimeUserLeft);
   }
 }
