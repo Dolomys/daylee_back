@@ -29,10 +29,6 @@ async function bootstrap() {
     .setTitle('Daylee')
     .setDescription('Daylee server sockets')
     .setVersion('1.0')
-    .addServer('daylee-ws', {
-      url: 'ws://localhost:3000',
-      protocol: 'socket.io',
-  })
     .addBearerAuth()
     .build();
 
