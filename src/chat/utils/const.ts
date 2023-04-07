@@ -1,7 +1,7 @@
 export const EventPatternChat = {
-    createRoom: 'chat/send/createRoom',
-    joinRoom: 'chat/send/joinRoom',
-    sendMessage: 'chat/send/message',
-    listenMessage: 'chat/listen/message',
-    listenExceptions: 'chat/listen/exception',
+    createRoom: 'send/createRoom',
+    joinRoom: 'send/joinRoom',
+    sendMessage: 'send/message',
+    listenMessage: 'listen/message',
+    listenExceptions: 'listen/exception',
   };

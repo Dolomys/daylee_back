@@ -29,6 +29,10 @@ async function bootstrap() {
     .setTitle('Daylee')
     .setDescription('Daylee server sockets')
     .setVersion('1.0')
+    .addServer('daylee-sockets', {
+      url: '/chat',
+      protocol: 'socket.io',
+  })
     .addBearerAuth()
     .build();
 
