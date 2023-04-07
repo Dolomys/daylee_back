@@ -6,6 +6,7 @@ import { UserDocument } from 'src/users/user.schema';
 import { CreateStoryType } from 'src/utils/types';
 import { Story, StoryDocument } from './story.schema';
 
+const DATE_24_HOURS_AGO = subHours(new Date(), 24);
 @Injectable()
 export class StoriesRepository {
   constructor(@InjectModel(Story.name) private storyModel: Model<StoryDocument>) {}
@@ -18,26 +19,28 @@ export class StoriesRepository {
   create = (story: CreateStoryType) => this.storyModel.create(story);
 
   findOne = (storyId: Types.ObjectId) => {
-    const date24HoursAgo = subHours(new Date(), 24);
     return this.storyModel
-      .findOne({ _id: storyId, createdAt: { $gte: date24HoursAgo } })
+      .findOne({ _id: storyId, createdAt: { $gte: DATE_24_HOURS_AGO } })
       .populate('owner')
       .exec()
       .then(this.orThrow);
   };
 
-  findByUser = (user: UserDocument) =>
-    this.storyModel.find({ owner: user }).populate('owner').exec().then(this.orThrow);
-
+  findByUser = (user: UserDocument) => {
+    return this.storyModel
+      .find({ owner: user, createdAt: { $gte: DATE_24_HOURS_AGO } })
+      .populate('owner')
+      .exec()
+      .then(this.orThrow);
+  };
   findFollowing = (following: UserDocument[]) => {
-    const date24HoursAgo = subHours(new Date(), 24);
     return this.storyModel
       .find({
         owner: {
           $in: following,
         },
         createdAt: {
-          $gte: date24HoursAgo,
+          $gte: DATE_24_HOURS_AGO,
         },
       })
       .populate('owner')
