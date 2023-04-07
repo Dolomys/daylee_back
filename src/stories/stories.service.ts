@@ -32,7 +32,7 @@ export class StoriesService {
 
   async getUserStories(user: UserDocument, storyOwner: UserDocument) {
     const isFollower = await this.followRepository.isFollowing(user, storyOwner.id);
-    if (!isFollower) throw new UnauthorizedException('NOT_FOLLOWING_USER');
+    if (user.id !== storyOwner.id && !isFollower) throw new UnauthorizedException('NOT_FOLLOWING_USER');
     const story = await this.storiesRepository.findByUser(storyOwner);
     return this.storiesMapper.toGetStoriesDtos(story);
   }
