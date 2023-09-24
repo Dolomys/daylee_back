@@ -1,6 +1,6 @@
 ## Description
 
-Daylee backend starter repository.
+Daylee backend starter repository a little instagram clone with all uses like post / like / follow and even messaging.
 
 # Installation
 
