@@ -11,33 +11,33 @@ $ npm install
 
 # Env Variables
 
-Voici la liste des variables d'environnements et leur implémentation :
+Here are the env variables and there implementations :
 
-1 - Créer un fichier 'config.yalm' à la racine du projet avec les valeurs ci-dessous : <br />
+1 - Create a file 'config.yalm' at the root of the project with these values : <br />
     ```
 
     MONGODB: 
-      URL: créer un compte MongoDB en ligne ou en local avec MongoDBCompass
+      URL: //create a mongo db account
 
     JWT:
-      SECRET: clé secrete
-      EXPIRATION_TIME: de préference 1d ou + pour ne pas avoir à se reconnecter trop souvent lors des test3d 
+      SECRET: //secretKey
+      EXPIRATION_TIME: //randomTime
 
-    CLOUDINARY: // Voir les infos ci-dessous
+    CLOUDINARY: //See Below
       NAME:  
       KEY: 
       SECRET: 
     ```
 
 
-### Jwt, ajouter une clé secrete et un temps d'expiration
+### Jwt, add a key and an expiration time
 JWT_SECRET  <br />
 JWT_EXPIRATION_TIME -->  <br />
 
 ### Cloudinary
-Env de Cloudinary, il faudra d'abord se créer un compte sur le site https://cloudinary.com/
+Create an account on https://cloudinary.com/
 
-On peut les retrouver sur le dashboard :
+You can then find your credential on the home page when logged :
 ![Cloundinary](https://cloudinary-res.cloudinary.com/image/upload/bo_1px_solid_gray/f_auto/q_auto/docs/prod_env_credentials.png)
 
 # Running the app
